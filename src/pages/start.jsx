@@ -1,15 +1,14 @@
 import React, { Component, useState } from 'react';
 import { Nav_bar } from '../components/Nav_bar';
-import { Homebody } from '../components/homebody';
+import {Startbody} from '../components/startbody.jsx';
 import { Routes, Route, Link } from 'react-router-dom'
-import Login from './login';
 
-export function Home(props) {
+export function Start(props) {
     return (
         <div className='home'>
             <Nav_bar/>
-            <Homebody/>
+            <Startbody/>
         </div>
     )
 }
-export default Home;
+export default Start;
