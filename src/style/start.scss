@@ -1,3 +1,83 @@
 .plus {
+    background-color: white !important;
+}
+.start_b{
+    //height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: 100px;
+    padding-top: 150px;
+}
+.start_b>div {
+    display: flex;
+    flex-direction: column;
+}
+.start_b>div>button { //.addbtn
+    margin-bottom: 40px;
+    margin-top: 40px;
+}
+.start_b>form {
+    width: 300px;
+    display: flex
+}
+.addbtn{
+    height: 38px;
+    width: 40px;
+    font-size: large;
+
+}
+.addbtn {
+    background-color: rgb(251, 180, 90);
+    border: 1px solid rgb(251, 180, 90);
+    border-radius: 15px;
+    height: 38px;
+    box-shadow: none;
+    color: white;
+    margin:auto;
+}
+.addbtn:hover, .addbtn:focus, .addbtn:active {
+    background-color: rgb(251, 180, 90);
+    border: 1px solid rgb(251, 180, 90);
+    border-radius: 15px;
+    box-shadow: none !important;
+    color: white;
+
+}
+.start_b>form>div>input {
+    border-right: none;
+    border-radius: 15px 0 0 15px;
+    width: 255px;
+    
+}
+/*.start_b>form>div>input:focus, .start_b>form>div>input:active {
+    border-color: #FBEFDA;
+    box-shadow: 0 0 0 .25rem #FFEBD7;
+    border-right: none;
+}*/
+.start_b>form>div>input:active, .start_b>form>div>input:focus , .start_b>form>div>input{
+    border-color: #ced4da;;
+    box-shadow: none !important;
+}
+.start_b>form>button {
     background-color: white;
+    border: 1px solid #ced4da;
+    border-left: none;
+    height: 38px;
+    border-radius: 0 15px 15px 0;
+}
+.start_b>form>button:active, .start_b>form>button:active:focus, .start_b>form>button:hover,  .start_b>form>button:focus{
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-left: none;
+    box-shadow:none !important;
+}
+.submitAddress {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid rgb(251, 180, 90);
+    border-radius: 15px;
 }
