@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Plus from '../../images/plus.png';
-
+import { Mapcopy } from './mapcopy';
+    
 const { kakao } = window
 
 const ClickAdd = ({ searchPlace, InputText }) => {
-    let [location, setLocation] = useState([]);
-    let [addLoc, setAddLoc] = useState([]);
+    let [location, setLocation] = useState([]); //입력된 주소
+    let [addLoc, setAddLoc] = useState([]); //추가된 주소
+    let [latlng, b] = useState([]); //입력 좌표
+    let [addlatlng, c] = useState([]);  // 추가 좌표
     useEffect(()=>{
         
         const container = document.getElementById('myMap')
@@ -26,11 +29,21 @@ const ClickAdd = ({ searchPlace, InputText }) => {
 
             // 정상적으로 검색이 완료됐으면 
             if (status === kakao.maps.services.Status.OK) {
-                let new_arr = [...location];
-                new_arr.unshift(searchPlace);
-                setLocation(new_arr);
+                let new_arr = [...location]; 
+                new_arr.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
+                setLocation(new_arr); // 검색 될 때 마다 값 바꿈
+                // console.log(InputText);
 
                 let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                // let latlng_arr = [...]
+
+                console.log("새로 검색한 위도",result[0].y);
+                console.log("새로 검색한 경도",result[0].x);
+
+                let new_latlng = [...latlng];
+                new_latlng.unshift([Number(result[0].y), Number(result[0].x)]); //검색한 주소의 좌표
+                b(new_latlng);
+                // console.log(new_latlng);
 
                 // 결과값으로 받은 위치를 마커로 표시합니다
                 let marker = new kakao.maps.Marker({
@@ -56,9 +69,15 @@ const ClickAdd = ({ searchPlace, InputText }) => {
     const buttonAdd = (intext) =>{
         if(location.includes(intext) & !addLoc.includes(intext)) {
             let aarr = [...addLoc];
-            aarr.push(intext);
+            aarr.unshift(intext);
             setAddLoc(aarr);
-            console.log(addLoc)
+            console.log("추가한 주소이름",aarr)
+
+            let aatlng = [...addlatlng];
+            aatlng.unshift(latlng[0]);
+            c(aatlng);
+            console.log("추가한 좌표값",aatlng);
+            // console.log(addlatlng);
         }
     }
     return (
@@ -70,8 +89,10 @@ const ClickAdd = ({ searchPlace, InputText }) => {
                 height: '400px',
                 }}>
             </div>
+            <Mapcopy title={addLoc} latlng={addlatlng}/>
             <button className='addbtn' onClick={()=>buttonAdd(InputText)}>+</button>
-            <div>{addLoc.map((a)=>(<div className='submitAddress'>{a}</div>))}</div>
+            <div>{addLoc.map((a) => (<div className='submitAddress'>{a}</div>))}</div>
+            {/* <div>{latlng.map((a)=>(<div className='submitAddress'>{a}</div>))}</div> */}
         </div>
     )
 }

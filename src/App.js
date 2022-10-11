@@ -9,8 +9,8 @@ import { Routes, Route, Link } from 'react-router-dom'
 import Login from './pages/login';
 import Map from './pages/map';
 import Start from './pages/start';
-import Mapcopy from './pages/mapcopy';
 import Setloc from './pages/setloc';
+import Mapcopy from './components/mapSearch/mapcopy';
 function App() {
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;
@@ -26,7 +26,8 @@ function App() {
         <Route path="/login" element={<Login/>}></Route>
         <Route path="/map" element={<Map/>}></Route>
         <Route path="/start" element={<Start/>}></Route>
-        <Route path="/setloc" element={<Setloc/>}></Route>
+        <Route path="/setloc" element={<Setloc />}></Route>
+        <Route path="/mapcopy" element={<Mapcopy/>}></Route>
 
       </Routes>
     </div>

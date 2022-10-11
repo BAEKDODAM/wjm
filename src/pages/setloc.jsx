@@ -17,7 +17,7 @@ export function Setloc() {
                         <Link to="/">로그인창</Link>
                     </div>
                     <div>
-                        <Link to="/map">지도</Link>
+                        <Link to="/mapcopy">지도</Link>
                     </div>
                 </div>
                 <div className='container'>
