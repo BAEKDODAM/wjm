@@ -1,6 +1,7 @@
 // import { useEffect } from "react";
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { ClickAdd } from './ClickAdd';
 const { kakao } = window;
 
 export function Mapcopy({ title, latlng }) {
@@ -44,11 +45,11 @@ export function Mapcopy({ title, latlng }) {
 
             console.log("무게중심 좌표", center_x, center_y);
 
-
-            let c_Lat = ttog(center_x, center_y).lat,   // 현재 WTM좌표계인 무게중심 좌표를 다시 WGS좌표계로 변환 후 할당
+        }
+            const c_Lat = ttog(center_x, center_y).lat,   // 현재 WTM좌표계인 무게중심 좌표를 다시 WGS좌표계로 변환 후 할당
                 c_Lng = ttog(center_x, center_y).lng;
         
-
+        
             let mapContainer = document.getElementById('map');  // 지도를 표시할 div 
             var mapOption = {
                 center: new kakao.maps.LatLng(c_Lat, c_Lng),
@@ -79,7 +80,7 @@ export function Mapcopy({ title, latlng }) {
                 position: new kakao.maps.LatLng(c_Lat, c_Lng)
             });
             marker.setMap(map);
-        }
+        // }
     })
     return (
         <div>
@@ -88,6 +89,7 @@ export function Mapcopy({ title, latlng }) {
             {/* <Link to="/setloc">위치입력</Link> */}
             <div id="map" className="map">
             </div>
+            <button >중간 장소 보기</button>
         </div>
     )
 }

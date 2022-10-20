@@ -3,7 +3,7 @@ import ClickAdd from './ClickAdd';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import SearchIcon from '../../images/search.png';
-import { Routes, Route, Link } from 'react-router-dom'
+// import { Routes, Route, Link } from 'react-router-dom'
 const { kakao } = window;
 
 function LandingPage() {
@@ -18,8 +18,7 @@ function LandingPage() {
   }, [alert]);
 
   const onChange = (e) => {
-    setInputText(e.target.value)
-    setInputText(e.target.result[0].address.address_name)
+    setInputText(e.target.value);
   }
 
   const handleSubmit = (e) => {
@@ -48,10 +47,10 @@ function LandingPage() {
             navigator.geolocation.getCurrentPosition(function (position) {
                 let current_lat = position.coords.latitude,
                     current_lon = position.coords.longitude;
-                getAddr(current_lat,current_lon);
+                getAddr(current_lat, current_lon);
             })
     }
-}
+  }
 
   return (
     <div className='start_b'>
@@ -60,18 +59,20 @@ function LandingPage() {
                 <p>주소를 자세히 적어주세요</p>
             ) : null}
         </div>
-      <button onClick={() => { set_loc() }}>현재 위치 불러오기</button>
+      <button onClick={() => { set_loc() }}
+              style={{
+                margin:'20px'
+                }}>현재 위치 불러오기</button>
 
         <form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail" >
             <Form.Control placeholder= '주소를 입력하세요' onChange={onChange} value={InputText}/>
           </Form.Group>
-          <Button type="submit"><img height="20px" src={SearchIcon}/></Button>
+        <Button type="submit"><img height="20px" src={SearchIcon}/></Button>
       </form>
         <ClickAdd searchPlace={Place} InputText={InputText} />
         {/* 지도 + 위치 저장 배열 */}
         {location.map((a) => (<div className='submitAddress'>{a}</div>))}
-        <Link to="/mapcopy">go</Link>
     </div>
   )
 }
