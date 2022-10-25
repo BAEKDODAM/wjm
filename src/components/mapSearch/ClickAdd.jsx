@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import Plus from '../../images/plus.png';
 import { Mapcopy } from './mapcopy';
+import STA from './sta.json';
+
 const { kakao } = window
 
 export function ClickAdd({ searchPlace, InputText }) {
@@ -9,9 +11,9 @@ export function ClickAdd({ searchPlace, InputText }) {
     let [addLoc, setAddLoc] = useState([]); //추가된 주소
     let [latlng, setLatlng] = useState([]); //입력 좌표
     let [addLatlng, setAddLatlng] = useState([]);  // 추가 좌표
+    let mmm = [];
 
     useEffect(() => {
-
         let container = document.getElementById('myMap'),
             mapOption = {
                 center: new kakao.maps.LatLng(37.566826004661, 126.978652258309), // 지도의 중심좌표
@@ -30,9 +32,9 @@ export function ClickAdd({ searchPlace, InputText }) {
 
                 // 정상적으로 검색이 완료됐으면 
                 if (status === kakao.maps.services.Status.OK) {
-                    let new_arr = [...location];
-                    new_arr.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
-                    setLocation(new_arr); // 검색 될 때 마다 값 바꿈
+                    let new_location = [...location];
+                    new_location.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
+                    setLocation(new_location); // 검색 될 때 마다 값 바꿈
 
                     let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -68,15 +70,15 @@ export function ClickAdd({ searchPlace, InputText }) {
     }, [searchPlace])
     const buttonAdd = (intext) => {
         if (location.includes(intext) & !addLoc.includes(intext)) {
-            let aarr = [...addLoc];
-            aarr.unshift(intext);
-            setAddLoc(aarr);
-            console.log("추가한 주소이름", aarr);
+            let new_addLoc = [...addLoc];
+            new_addLoc.unshift(intext);
+            setAddLoc(new_addLoc);
+            console.log("추가한 주소이름", new_addLoc);
 
-            let aatlng = [...addLatlng];
-            aatlng.unshift(latlng[0]);
-            setAddLatlng(aatlng);
-            console.log("추가한 좌표값", aatlng);
+            let new_addLatlng = [...addLatlng];
+            new_addLatlng.unshift(latlng[0]);
+            setAddLatlng(new_addLatlng);
+            console.log("추가한 좌표값", new_addLatlng);
         }
     }
 
@@ -100,13 +102,13 @@ export function ClickAdd({ searchPlace, InputText }) {
             let split_l = splitList(WTM_points).ll,     // 중심선 기준 왼쪽, 오른쪽으로 리스트 나누고 할당
                 split_r = splitList(WTM_points).lr;
 
-            let new_l = sort(split_l).asc,    // 리스트 정렬 후 할당
+            var new_l = sort(split_l).asc,    // 리스트 정렬 후 할당
                 new_r = sort(split_r).des;
 
             console.log("기준선 왼쪽 리스트", new_l);
             console.log("기준선 오른쪽 리스트", new_r);
 
-            let poly_points = new_l.concat(new_r);  // 정렬된 두개 리스트 합친 후 할당
+            var poly_points = new_l.concat(new_r);  // 정렬된 두개 리스트 합친 후 할당
 
             console.log("정렬된 리스트", poly_points);
 
@@ -134,17 +136,17 @@ export function ClickAdd({ searchPlace, InputText }) {
         // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ가중치 추가하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
         var key = 0;
-        let unitVec = getUnitvec(WTM_points, center_x, center_y, key).unitVec,
-            errVec_x = getUnitvec(WTM_points, center_x, center_y, key).errVec_x,
-            errVec_y = getUnitvec(WTM_points, center_x, center_y, key).errVec_y;
+        let unitVec = getUnitvec(poly_points, center_x, center_y, key, new_l, new_r).unitVec,
+            errVec_x = getUnitvec(poly_points, center_x, center_y, key, new_l, new_r).errVec_x,
+            errVec_y = getUnitvec(poly_points, center_x, center_y, key, new_l, new_r).errVec_y;
 
         console.log("각 출발지까지 단위벡터", unitVec);
         console.log("n빵해서 각 단위벡터에 더하는 값", errVec_x, errVec_y);
 
         var key = 1;
-        let addWeight = getUnitvec(unitVec, errVec_x, errVec_y, key).addWeight,
-            weigtVec_x = getUnitvec(unitVec, errVec_x, errVec_y, key).weigtVec_x,
-            weigtVec_y = getUnitvec(unitVec, errVec_x, errVec_y, key).weigtVec_y;
+        let addWeight = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).addWeight,
+            weigtVec_x = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).weigtVec_x,
+            weigtVec_y = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).weigtVec_y;
 
         console.log("단위벡터 합(가중치 없으면 0에 수렴)", addWeight[0], addWeight[1]);
         console.log("가중치 포함된 무게중심 단위벡터(가중치 없으면 0에 수렴)", weigtVec_x, weigtVec_y);
@@ -161,90 +163,233 @@ export function ClickAdd({ searchPlace, InputText }) {
 
         // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-        let container = document.getElementById('myMap'),
-            mapOption = {
-                center: new kakao.maps.LatLng(c_Lat2, c_Lng2), // 지도의 중심좌표
-                level: 10 // 지도의 확대 레벨
-            };
-        let map = new kakao.maps.Map(container, mapOption);
+        getAddr(WGS_points, Title, c_Lat2, c_Lng2);
 
-        let imageSrc1 = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
-            imageSrc2 = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
-
-        for (let i = 0; i < Title.length; i++) {
-            // 마커 이미지의 이미지 크기 
-            let imageSize = new kakao.maps.Size(24, 35);
-
-            // 마커 이미지를 생성 
-            let markerImage = new kakao.maps.MarkerImage(imageSrc1, imageSize);
-
-            // 마커를 생성
-            var marker = new kakao.maps.Marker({
-                map: map,   // 마커를 표시할 지도
-                position: new kakao.maps.LatLng(WGS_points[i][0], WGS_points[i][1]),  // 마커를 표시할 위치
-                title: Title[i],   // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됨
-                image: markerImage  // 마커 이미지 
-            });
-
-            // let infowindow = new kakao.maps.InfoWindow({
-            //     content: `<div style="width:150px;text-align:center;padding:6px 0;">`+(Title.length-i)+`<br><p>`+Title[i]+`</p></div>`,
-            //     clickable: true
-            // });
-            // infowindow.open(map, marker);
-
-        }
-        let imageSize = new kakao.maps.Size(35, 40);
-        let markerImage = new kakao.maps.MarkerImage(imageSrc2, imageSize);
-
-        var marker = new kakao.maps.Marker({    // 무게중심 좌표에 마커 생성
-            position: new kakao.maps.LatLng(c_Lat, c_Lng),
-            // image: markerImage
-        });
-
-        var marker2 = new kakao.maps.Marker({    // 무게중심 좌표에 마커 생성
-            position: new kakao.maps.LatLng(c_Lat2, c_Lng2),
-            image: markerImage
-        });
-
-        marker.setMap(map);
-        marker2.setMap(map);
-
-        for (let i = 0; i < WGS_points.length; i++) {
-            searchPubTransPathAJAX(WGS_points, c_Lat, c_Lng, i);
-        }
-
+        let key2 = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).goC_2
+        console.log(key2);    // key2 == 0 이면 가중치 중간지점 key == 2 이면 처음 중간지점
     }
 
-    function searchPubTransPathAJAX(WGS_points, c_Lat, c_Lng, i) {
+    // function searchPubPOIRadius(c_Lat, c_Lng, WGS_points) {                                //반경 n미터 지하철역 찾기
+    //     var xhr = new XMLHttpRequest();
+    //     var url = "https://api.odsay.com/v1/api/pointSearch?x=" + c_Lng + "&y=" + c_Lat + "&radius=1500&stationClass=2&apiKey=6g%2BFZMSoP6lKIQicoZdy5Q";
+    //     xhr.open("GET", url, true);
+    //     xhr.send();
+    //     xhr.onreadystatechange = function () {
+
+    //         if (xhr.readyState == 4 && xhr.status == 200) {
+    //             // console.log(JSON.parse(xhr.responseText));
+    //             // console.log(xhr.responseText);
+
+    //             var poiCount = (JSON.parse(xhr.responseText))["result"].count;
+    //             console.log(JSON.parse(xhr.responseText)["result"].count);
+
+    //             for (let c = 0; c < poiCount; c++) {
+    //                 for (let i = 0; i < WGS_points.length; i++) {
+    //                     let latt = (JSON.parse(xhr.responseText))["result"]["station"][c].y,
+    //                         lngg = (JSON.parse(xhr.responseText))["result"]["station"][c].x;
+
+    //                     searchPubTransPathAJAX(WGS_points, latt, lngg, i);
+
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    function searchPubTransPathAJAX(WGS_points, latt, lngg, i) {
         var xhr = new XMLHttpRequest();
-        var url = "https://api.odsay.com/v1/api/searchPubTransPathT?SX=" + WGS_points[i][1] + "&SY=" + WGS_points[i][0] + "&EX=" + c_Lng + "&EY=" + c_Lat + "&apiKey=6g%2BFZMSoP6lKIQicoZdy5Q";
-        xhr.open("GET", url, true);
-        xhr.send();
+        var url = "https://api.odsay.com/v1/api/searchPubTransPathT?SX=" + WGS_points[i][1] + "&SY=" + WGS_points[i][0] + "&EX=" + lngg + "&EY=" + latt + "&apiKey=6g%2BFZMSoP6lKIQicoZdy5Q";
+        xhr.open("GET", url, false);
+        // xhr.send();
         xhr.onreadystatechange = function () {
 
             if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log(xhr.responseText); // <- xhr.responseText 로 결과를 가져올 수 있음
+                console.log(WGS_points[i][1]);
+
+                console.log((JSON.parse(xhr.responseText))["result"]["path"][0].info.firstStartStation, (JSON.parse(xhr.responseText))["result"]["path"][0].info.lastEndStation); // <- xhr.responseText 로 결과를 가져올 수 있음
+
+                let bus = (JSON.parse(xhr.responseText))["result"].busCount,
+                    subway = (JSON.parse(xhr.responseText))["result"].subwayCount,
+                    subwayBus = (JSON.parse(xhr.responseText))["result"].subwayBusCount;
+
+                let totalwayCount = bus + subway + subwayBus;
+
+                // console.log("bus", bus);
+                // console.log("subway", subway);
+                // console.log("subwayBus", subwayBus);
+                // console.log("총 가는 방법 수 >>", totalwayCount);
+
+                let timeArr = [],
+                    minTime = 0,
+                    index;
+
+                for (let t = 0; t < totalwayCount; t++) {
+                    timeArr[t] = (JSON.parse(xhr.responseText))["result"]["path"][t].info.totalTime;
+                    // console.log("timeArr", (JSON.parse(xhr.responseText))["result"]["path"][t].info.totalTime);
+                }
+
+                console.log("timeArr >> ", timeArr);
+
+                for (let t = 0; t < totalwayCount; t++) {
+                    if (!minTime) {
+                        minTime = timeArr[t];
+                    }
+
+                    if (timeArr[t] <= minTime) {
+                        minTime = timeArr[t];
+                        index = t;
+                    }
+                }
+                console.log(minTime);
+                console.log(index);
+                mmm.unshift([i, index]);
+                console.log("[출발지, 소요시간]", mmm);
             }
+        };
+        xhr.send(); //동기호출
+    }
+
+    function getAddr(WGS_points, Title, c_Lat, c_Lng) {
+        let geocoder = new kakao.maps.services.Geocoder();
+        let coord = new kakao.maps.LatLng(c_Lat, c_Lng);
+
+        var p_latlng = [];
+        var nth_gu = 0;
+
+        let callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                console.log("무게중심 지역구 >>", result[0].address.region_2depth_name);       //콘솔창에 현재위치
+
+                var select = result[0].address.region_2depth_name;
+                // var p_latlng = [];
+            }
+
+            for (let i = 0; i < (STA)["station"].length; i++) {
+                if (select == (STA)["station"][i].region_name) {
+
+                    var info_len = (STA)["station"][i]["info"].length;
+
+                    for (let p = 0; p < info_len; p++) {
+                        console.log((STA)["station"][i]["info"][p].PstationName);
+                        let p_lat = (STA)["station"][i]["info"][p].y,
+                            p_lng = (STA)["station"][i]["info"][p].x;
+
+                        p_latlng[p] = [p_lat, p_lng];
+                        nth_gu = i;
+                    }
+                }
+            }
+            console.log(p_latlng);
+
+            let container = document.getElementById('myMap'),
+                mapOption = {
+                    center: new kakao.maps.LatLng(c_Lat, c_Lng),
+                    level: 9
+                };
+            const map = new kakao.maps.Map(container, mapOption);
+
+            let imageSrc_star = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+                imageSrc_red = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+
+            for (let i = 0; i < WGS_points.length; i++) {    //출발지 마커
+                let imageSize_star = new kakao.maps.Size(24, 35);
+                let markerImage_star = new kakao.maps.MarkerImage(imageSrc_star, imageSize_star);
+                var marker_star = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(WGS_points[i][0], WGS_points[i][1]),
+                    title: Title[i],
+                    image: markerImage_star,
+                    clickable: true
+                });
+
+                var infowindow_star = new kakao.maps.InfoWindow({
+                    content: '<div style="padding:5px;">' + Title[i] + '</div>',
+                    removable: true
+                });
+                (function (marker_star, infowindow_star) {
+                    kakao.maps.event.addListener(marker_star, 'click', function () {
+                        infowindow_star.open(map, marker_star);
+                    });
+                })(marker_star, infowindow_star);
+            }
+
+            var marker_blue = new kakao.maps.Marker({    //1차 중간지점 마커
+                position: new kakao.maps.LatLng(c_Lat, c_Lng),
+                map: map,
+                clickable: true
+            });
+
+            var infowindow_blue = new kakao.maps.InfoWindow({
+                content: '<div style="padding:5px;">' + select + '에 추천역 ' + info_len + '개</div>',
+                removable: true
+            });
+
+            kakao.maps.event.addListener(marker_blue, 'click', function () {
+                infowindow_blue.open(map, marker_blue);
+            });
+
+            for (let i = 0; i < p_latlng.length; i++) {    //중간지점 지역구 지하철역 마커
+                let imageSize_red = new kakao.maps.Size(35, 40);
+                let markerImage_red = new kakao.maps.MarkerImage(imageSrc_red, imageSize_red);
+                var marker_red = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(p_latlng[i][0], p_latlng[i][1]),
+                    title: (STA)["station"][nth_gu]["info"][i].PstationName,
+                    image: markerImage_red,
+                    clickable: true
+                });
+
+                var infowindow_red = new kakao.maps.InfoWindow({
+                    content: '<div style="padding:5px;">' + (STA)["station"][nth_gu]["info"][i].PstationName + '</div>',
+                    removable: true
+                });
+                (function (marker_red, infowindow_red) {
+                    kakao.maps.event.addListener(marker_red, 'click', function () {
+                        // infowindow_star.open(map, marker_star);
+                        infowindow_red.open(map, marker_red);
+                    });
+                })(marker_red, infowindow_red);
+            }
+            marker_star.setMap(map);
+            marker_blue.setMap(map);
+            marker_red.setMap(map);
+
+            // for (let p = 0; p < p_latlng.length; p++) {
+            //     for (let i = 0; i < WGS_points.length; i++) {
+            //         searchPubTransPathAJAX(WGS_points, p_latlng[p][0], p_latlng[p][1], i);
+            //     }
+            // }
+
+            // }
         }
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
     }
 
 
     return (
-        <div>
-            <div
-                id="myMap"
-                style={{
-                    width: '350px',
-                    height: '400px',
-                }}>
+        <div className="map_wrap">
+            <div id="myMap"
+                // style={{
+                //     width: '350px',
+                //     height: '400px',
+                // }}
+                style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', }}>
+            </div>
+            <div id="menu_wrap" className="bg_white">
+                <hr></hr>
+                <div className='start_b'>
+                    <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
+                    <button className='addbtn' onClick={() => buttonAdd(InputText)}>출발지 추가하기</button>
+                    <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
+                </div>
             </div>
 
             {/* <Mapcopy title={addLoc} latlng={addLatlng} /> */}
 
-            <button className='addbtn' onClick={() => buttonAdd(InputText)}>+</button>
+            {/* <button className='addbtn' onClick={() => buttonAdd(InputText)}>+</button>
             <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
-            <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
-        </div>
+            <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div> */}
+        </div >
     )
 }
 
@@ -370,12 +515,11 @@ function getCentroid(poly_points) {  // 사용자 둘 or 둘 이상일 때 무�
     };
 }
 
-function getUnitvec(WTM_points, center_x, center_y, key) {
+function getUnitvec(poly_points, center_x, center_y, key, new_l, new_r) {
     let unitVec = [];
-    for (let i = 0; i < WTM_points.length; i++) {
-        unitVec[i] = [WTM_points[i][0] - center_x, WTM_points[i][1] - center_y];
+    for (let i = 0; i < poly_points.length; i++) {
+        unitVec[i] = [poly_points[i][0] - center_x, poly_points[i][1] - center_y];
     }
-
     // console.log("각 출발지까지 단위벡터", unitVec);
 
     let addWeight = [],
@@ -384,22 +528,37 @@ function getUnitvec(WTM_points, center_x, center_y, key) {
     addWeight[0] = 0;
     addWeight[1] = 0;
 
+    let key2 = 0;
+
     for (let i = 0; i < unitVec.length; i++) {
-        if (i == 1 && key == 1) {   // 조건문 : key == 1 이면 실행 
-            // 내용 : 가중치를 주가해주어야 할 좌표리스트 인덱스 값들을 모아 또 다른 리스트로 저장해두고 
-            // ex) 길이 0번째, 3번째 좌표에 가중치 추가해야한다면[0, 3]
-            //해당 리스트 길이(2)만큼 for문을 돌려서 그 값을 매개변수로 전달
-            //++추가++ : getUnitvec()매개변수에 해당 리스트 추가하기
-
-            // for (let temp = 0; list.length < temp++){
-            //     addWeight[0] += (unitVec[list[temp]][0] * 2); // 가중치 + 2
-            //     addWeight[1] += (unitVec[list[temp]][1] * 2);
-            // }
-
-            addWeight[0] += (unitVec[i][0] * 2); // 가중치 + 2
-            addWeight[1] += (unitVec[i][1] * 2);
+        if (key == 1) {
+            if (new_l.length >= 3 * new_r.length) {
+                for (let temp = 0; temp < new_l.length; temp++) {
+                    addWeight[0] += (unitVec[temp][0]); // 가중치 * 1.2
+                    addWeight[1] += (unitVec[temp][1]);
+                }
+                for (let temp = new_l.length; temp < new_l.length + new_r.length; temp++) {
+                    addWeight[0] += (unitVec[temp][0] * 1.4);
+                    addWeight[1] += (unitVec[temp][1] * 1.4);
+                }
+            }
+            else if (new_r.length >= 3 * new_l.length) {
+                for (let temp = 0; temp < new_l.length; temp++) {
+                    addWeight[0] += (unitVec[temp][0] * 1.4);
+                    addWeight[1] += (unitVec[temp][1] * 1.4);
+                }
+                for (let temp = new_l.length; temp < new_l.length + new_r.length; temp++) {
+                    addWeight[0] += (unitVec[temp][0]); // 가중치 * 1.2
+                    addWeight[1] += (unitVec[temp][1]);
+                }
+            }
+            else {
+                key2 = 2;
+                addWeight[0] += unitVec[i][0];
+                addWeight[1] += unitVec[i][1];
+            }
         }
-        else {
+        else if (key == 0) {
             addWeight[0] += unitVec[i][0];
             addWeight[1] += unitVec[i][1];
         }
@@ -407,12 +566,13 @@ function getUnitvec(WTM_points, center_x, center_y, key) {
     weigtVec[0] = [addWeight[0] / unitVec.length, addWeight[1] / unitVec.length];
 
     return {
-        unitVec: unitVec, // pp
-        addWeight: addWeight, // g
+        unitVec: unitVec,
+        addWeight: addWeight,
         errVec_x: weigtVec[0][0],
         errVec_y: weigtVec[0][1],
         weigtVec_x: weigtVec[0][0],
-        weigtVec_y: weigtVec[0][1] // gg
+        weigtVec_y: weigtVec[0][1],
+        goC_2: key2
     }
 }
 
