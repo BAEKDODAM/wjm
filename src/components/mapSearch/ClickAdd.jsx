@@ -165,6 +165,10 @@ export function ClickAdd({ searchPlace, InputText }) {
 
         getAddr(WGS_points, Title, c_Lat2, c_Lng2);
 
+        let overlay = document.querySelector('#overlay'),
+            sta_wrap = document.querySelector('#sta_wrap');
+        overlay.removeChild(sta_wrap);
+
         let key2 = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).goC_2
         console.log(key2);    // key2 == 0 이면 가중치 중간지점 key == 2 이면 처음 중간지점
     }
@@ -320,7 +324,7 @@ export function ClickAdd({ searchPlace, InputText }) {
             });
 
             var infowindow_blue = new kakao.maps.InfoWindow({
-                content: '<div style="padding:5px;">' + select + '에 추천역 ' + info_len + '개</div>',
+                content: '<div style="padding:5px;">' + select + '</div>',
                 removable: true
             });
 
@@ -354,7 +358,29 @@ export function ClickAdd({ searchPlace, InputText }) {
             marker_blue.setMap(map);
             marker_red.setMap(map);
 
-            // for (let p = 0; p < p_latlng.length; p++) {
+            let overlay = document.querySelector('#overlay'),
+                sta_wrap = document.createElement('div'),
+                info = document.createElement('div'),
+                hr = document.createElement('hr');
+
+            sta_wrap.id = "sta_wrap";
+            sta_wrap.className = "bg_white";
+            overlay.appendChild(sta_wrap);
+
+            info.innerHTML = '<div style="padding:5px;">' + select + '에 추천역 ' + info_len + '개</div>';
+            sta_wrap.appendChild(info);
+
+            sta_wrap.appendChild(hr);
+
+            for (let i = 0; i < p_latlng.length; i++) {
+                let new_sta = document.createElement('a');
+                new_sta.innerHTML = '<div>' + (STA)["station"][nth_gu]["info"][i].PstationName + ' 길찾기</div>';
+                // '<div style="padding:5px;">' + (STA)["station"][nth_gu]["info"][i].PstationName + '</div>';
+                new_sta.href = "https://map.kakao.com/link/to/" + (STA)["station"][nth_gu]["info"][i].PstationName + "," + p_latlng[i][0] + "," + p_latlng[i][1];
+                sta_wrap.appendChild(new_sta);
+            }
+
+            // for (let p = 0; p < p_latlng.length; p++) {  //나중에 시간있으면 추가
             //     for (let i = 0; i < WGS_points.length; i++) {
             //         searchPubTransPathAJAX(WGS_points, p_latlng[p][0], p_latlng[p][1], i);
             //     }
@@ -365,7 +391,6 @@ export function ClickAdd({ searchPlace, InputText }) {
         geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
     }
 
-
     return (
         <div className="map_wrap">
             <div id="myMap"
@@ -375,15 +400,17 @@ export function ClickAdd({ searchPlace, InputText }) {
                 // }}
                 style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', }}>
             </div>
-            <div id="menu_wrap" className="bg_white">
-                <hr></hr>
-                <div className='start_b'>
-                    <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
-                    <button className='addbtn' onClick={() => buttonAdd(InputText)}>출발지 추가하기</button>
-                    <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
+            <div id="overlay">
+                <div id="menu_wrap" className="bg_white">
+                    <div className='start_b'>
+                        <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
+                        <button className='addbtn' onClick={() => buttonAdd(InputText)}>출발지 추가하기</button>
+                        <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
+                    </div>
+                    <hr></hr>
                 </div>
             </div>
-
+            <a>dd</a>
             {/* <Mapcopy title={addLoc} latlng={addLatlng} /> */}
 
             {/* <button className='addbtn' onClick={() => buttonAdd(InputText)}>+</button>
