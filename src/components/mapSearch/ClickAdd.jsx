@@ -6,68 +6,117 @@ import STA from './sta.json';
 
 const { kakao } = window
 
-export function ClickAdd({ searchPlace, InputText }) {
+export function ClickAdd({ searchPlace, InputText, lat, lng, name }) {
     let [location, setLocation] = useState([]); //입력된 주소
     let [addLoc, setAddLoc] = useState([]); //추가된 주소
     let [latlng, setLatlng] = useState([]); //입력 좌표
     let [addLatlng, setAddLatlng] = useState([]);  // 추가 좌표
+    // let [n, setN] = useState([]);
     let mmm = [];
 
     useEffect(() => {
+
         let container = document.getElementById('myMap'),
             mapOption = {
                 center: new kakao.maps.LatLng(37.566826004661, 126.978652258309), // 지도의 중심좌표
-                level: 9 // 지도의 확대 레벨
+                level: 6 // 지도의 확대 레벨
             };
 
         // 지도를 생성합니다    
         let map = new kakao.maps.Map(container, mapOption);
 
-        // 주소-좌표 변환 객체를 생성합니다
-        let geocoder = new kakao.maps.services.Geocoder();
+        let new_location = [...location];
+        new_location.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
+        setLocation(new_location); // 검색 될 때 마다 값 바꿈
 
-        // 주소로 좌표를 검색합니다
-        if (searchPlace != 0) {
-            geocoder.addressSearch(searchPlace, function (result, status) {
+        console.log("검색 주소", location);
 
-                // 정상적으로 검색이 완료됐으면 
-                if (status === kakao.maps.services.Status.OK) {
-                    let new_location = [...location];
-                    new_location.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
-                    setLocation(new_location); // 검색 될 때 마다 값 바꿈
+        let coords = new kakao.maps.LatLng(lat, lng);
 
-                    let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        console.log("새로 검색한 위도", lat);
+        console.log("새로 검색한 경도", lng);
 
-                    console.log("새로 검색한 위도", result[0].y);
-                    console.log("새로 검색한 경도", result[0].x);
+        let new_latlng = [...latlng];
+        new_latlng.unshift([Number(lat), Number(lng)]); //검색한 주소의 좌표
+        setLatlng(new_latlng);
 
-                    let new_latlng = [...latlng];
-                    new_latlng.unshift([Number(result[0].y), Number(result[0].x)]); //검색한 주소의 좌표
-                    setLatlng(new_latlng);
+        // console.log("검색 좌표", latlng);
 
-                    // 결과값으로 받은 위치를 마커로 표시합니다
-                    let searchMarker = new kakao.maps.Marker({
-                        map: map,
-                        position: coords
-                    });
+        let searchMarker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+        });
 
-                    // 인포윈도우로 장소에 대한 설명을 표시합니다
-                    let infowindow = new kakao.maps.InfoWindow({
-                        content: `<div style="width:150px;text-align:center;padding:6px 0;">` + searchPlace + `</div>`,
-                        clickable: true
-                    });
-                    infowindow.open(map, searchMarker);
+        let infowindow = new kakao.maps.InfoWindow({
+            content: `<div style="width:150px;text-align:center;padding:6px 0;">` + name + `</div>`,
+            clickable: true
+        });
 
-                    map.setCenter(coords);
-                    // 마커에 클릭이벤트를 등록합니다
-                }
-                else {
-                    alert('도로명 주소로 입력해주세요');
-                    return;
-                }
-            })
-        }
-    }, [searchPlace])
+        infowindow.open(map, searchMarker);
+
+        map.setCenter(coords);
+
+    }, [searchPlace, lat, lng, name])
+
+    // useEffect(() => {
+    //     let container = document.getElementById('myMap'),
+    //         mapOption = {
+    //             center: new kakao.maps.LatLng(37.566826004661, 126.978652258309), // 지도의 중심좌표
+    //             level: 9 // 지도의 확대 레벨
+    //         };
+
+    //     // 지도를 생성합니다    
+    //     let map = new kakao.maps.Map(container, mapOption);
+
+    //     // 주소-좌표 변환 객체를 생성합니다
+    //     let geocoder = new kakao.maps.services.Geocoder();
+
+    //     // 주소로 좌표를 검색합니다
+    //     if (searchPlace != 0) {
+    //         geocoder.addressSearch(searchPlace, function (result, status) {
+
+    //             // 정상적으로 검색이 완료됐으면 
+    //             if (status === kakao.maps.services.Status.OK) {
+    //                 let new_location = [...location];
+    //                 new_location.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
+    //                 setLocation(new_location); // 검색 될 때 마다 값 바꿈
+
+    //                 let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+    //                 console.log("새로 검색한 위도", result[0].y);
+    //                 console.log("새로 검색한 경도", result[0].x);
+
+    //                 console.log("검색 주소", location);
+    //                 console.log("검색 좌표", latlng);
+
+    //                 let new_latlng = [...latlng];
+    //                 new_latlng.unshift([Number(result[0].y), Number(result[0].x)]); //검색한 주소의 좌표
+    //                 setLatlng(new_latlng);
+
+    //                 // 결과값으로 받은 위치를 마커로 표시합니다
+    //                 let searchMarker = new kakao.maps.Marker({
+    //                     map: map,
+    //                     position: coords
+    //                 });
+
+    //                 // 인포윈도우로 장소에 대한 설명을 표시합니다
+    //                 let infowindow = new kakao.maps.InfoWindow({
+    //                     content: `<div style="width:150px;text-align:center;padding:6px 0;">` + searchPlace + `</div>`,
+    //                     clickable: true
+    //                 });
+    //                 infowindow.open(map, searchMarker);
+
+    //                 map.setCenter(coords);
+    //                 // 마커에 클릭이벤트를 등록합니다
+    //             }
+    //             else {
+    //                 alert('도로명 주소로 입력해주세요');
+    //                 return;
+    //             }
+    //         })
+    //     }
+    // }, [searchPlace])
+
     const buttonAdd = (intext) => {
         if (location.includes(intext) & !addLoc.includes(intext)) {
             let new_addLoc = [...addLoc];
@@ -167,7 +216,9 @@ export function ClickAdd({ searchPlace, InputText }) {
 
         let overlay = document.querySelector('#overlay'),
             sta_wrap = document.querySelector('#sta_wrap');
-        overlay.removeChild(sta_wrap);
+        if (sta_wrap) {
+            overlay.removeChild(sta_wrap);
+        }
 
         let key2 = getUnitvec(unitVec, errVec_x, errVec_y, key, new_l, new_r).goC_2
         console.log(key2);    // key2 == 0 이면 가중치 중간지점 key == 2 이면 처음 중간지점
@@ -324,7 +375,7 @@ export function ClickAdd({ searchPlace, InputText }) {
             });
 
             var infowindow_blue = new kakao.maps.InfoWindow({
-                content: '<div style="padding:5px;">' + select + '</div>',
+                content: '<div style="padding:5px;">중심 지역구 : ' + select + '</div>',
                 removable: true
             });
 
@@ -392,7 +443,7 @@ export function ClickAdd({ searchPlace, InputText }) {
     }
 
     return (
-        <div className="map_wrap">
+        <>
             <div id="myMap"
                 // style={{
                 //     width: '350px',
@@ -400,26 +451,28 @@ export function ClickAdd({ searchPlace, InputText }) {
                 // }}
                 style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', }}>
             </div>
+
+
             <div id="overlay">
                 <div id="menu_wrap" className="bg_white">
                     <div className='start_b'>
                         <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
-                        <button className='addbtn' onClick={() => buttonAdd(InputText)}>출발지 추가하기</button>
+                        <button className='addbtn' onClick={() => buttonAdd(searchPlace)}>출발지 추가하기</button>
                         <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
                     </div>
                     <hr></hr>
                 </div>
             </div>
-            <a>dd</a>
+
             {/* <Mapcopy title={addLoc} latlng={addLatlng} /> */}
 
             {/* <button className='addbtn' onClick={() => buttonAdd(InputText)}>+</button>
             <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
             <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div> */}
-        </div >
+
+        </>
     )
 }
-
 
 export default ClickAdd;
 
