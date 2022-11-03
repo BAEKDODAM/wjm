@@ -74,10 +74,37 @@
     border-left: none;
     box-shadow:none !important;
 }
-.submitAddress {
+.submitAddress{
     text-align: center;
     margin-bottom: 30px;
     padding: 15px;
     border: 1px solid rgb(251, 180, 90);
     border-radius: 15px;
+    display: flex;
+    flex-direction: row;
 }
+.submitAddress>div{
+    margin: auto;
+}
+.deleteBtn{
+    background-color: white;
+    border: solid 2px #fff2dd;
+    padding-left: 7px;
+    padding-right: 7px;
+    color: rgb(251, 180, 90);
+    font-weight: 500;
+    //font-size: 20px;
+}
+
+.searchBtn {
+    background-color: #fff2dd;
+    width: 350px;
+    padding: 15px;
+    margin: 20px;
+    border-radius: 15px;
+    border: 1px solid #fff2dd;
+}
+.searchBtn:hover {
+    box-shadow: 0 0 2px .07rem rgb(251, 180, 90);
+}
+

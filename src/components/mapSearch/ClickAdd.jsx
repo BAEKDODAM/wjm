@@ -3,7 +3,7 @@ import Plus from '../../images/plus.png';
 
 const { kakao } = window
 
-const ClickAdd = ({ searchPlace, InputText }) => {
+const ClickAdd = ({ searchPlace, InputText, setAddress}) => {
     let [location, setLocation] = useState([]);
     let [addLoc, setAddLoc] = useState([]);
     useEffect(()=>{
@@ -58,20 +58,33 @@ const ClickAdd = ({ searchPlace, InputText }) => {
             let aarr = [...addLoc];
             aarr.push(intext);
             setAddLoc(aarr);
-            console.log(addLoc)
+            setAddress(addLoc)
+            
         }
     }
+
     return (
         <div>
             <div
                 id="myMap"
                 style={{
                 width: '350px',
-                height: '400px',
+                height: '350px',
                 }}>
             </div>
             <button className='addbtn' onClick={()=>buttonAdd(InputText)}>+</button>
-            <div>{addLoc.map((a)=>(<div className='submitAddress'>{a}</div>))}</div>
+            <div>{addLoc.map((a,i)=>(
+                <div key={i} className='submitAddress'>
+                    <div>{a}</div>
+                    <button className="deleteBtn" onClick={()=>{
+                        let copy=[...addLoc];
+                        copy.splice(i,1)
+                        setAddLoc(copy);
+                        setAddress(addLoc)
+                        console.log(addLoc)
+                    }}>X</button>
+                </div>))}
+            </div>
         </div>
     )
 }

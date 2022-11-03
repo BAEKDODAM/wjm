@@ -3,17 +3,13 @@ import ClickAdd from './ClickAdd';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import SearchIcon from '../../images/search.png';
-function LandingPage() {
+import { Routes, Route, Link } from 'react-router-dom'
+
+function LandingPage(props) {
   const [InputText, setInputText] = useState('')
   const [Place, setPlace] = useState('')
-  let [alert, setAlert] = useState(true);
-  let [location, setLocation] = useState([]);
+  let [address, setAddress] = useState([]);
 
-  useEffect(()=>{
-    let timer = setTimeout(()=> {
-        setAlert(false);
-    }, 2000);
-  }, [alert]);
 
   const onChange = (e) => {
     setInputText(e.target.value)
@@ -27,29 +23,22 @@ function LandingPage() {
 
   return (
     <div className='start_b'>
-        <div>
-            {alert==true? (
-                <p>주소를 자세히 적어주세요</p>
-            ) : null}
-        </div>
+
         <form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail" >
               <Form.Control placeholder="주소를 입력하세요" onChange={onChange} value={InputText} />
           </Form.Group>
           <Button type="submit"><img height="20px" src={SearchIcon}/></Button>
         </form>
-        <ClickAdd searchPlace={Place} InputText={InputText}/>
-        {location.map((a)=>(<div className='submitAddress'>{a}</div>))}
+        <ClickAdd searchPlace={Place} InputText={InputText} setAddress={setAddress}/>
+        <Link to='/find'><button className='searchBtn'>중간 지점 찾기</button></Link>
+        {/*location.map((a)=>(<div className='submitAddress'>{a}</div>))*/}
+        { /*address.length>0 ? <Link to='/find'><button className='searchBtn'>중간 지점 찾기</button></Link> : null }
+        address.length<=0 ? null : <Link to='/find'><button className='searchBtn'>중간 지점 찾기</button></Link> */}
+
+        
     </div>
   )
 }
 
-function Message(){
-    let [alert, setAlert] = useState(true);
-    useEffect(()=>{
-        let timer = setTimeout(()=> {
-            setAlert(!alert);
-        }, 2000);
-    });
-}
 export default LandingPage
