@@ -16,6 +16,8 @@ export function LandingPage() {
   let [lng, setLng] = useState([]);
 
   useEffect(() => {
+    let sta_wrap = document.querySelector('#sta_wrap');
+    sta_wrap.style.display = "none";
 
     let container = document.getElementById('myMap'),
       mapOption = {
@@ -31,14 +33,15 @@ export function LandingPage() {
     searchPlaces()
 
     function searchPlaces() {
+      if (Place != "") {
+        if (!Place.replace(/^\s+|\s+$/g, '')) {
+          alert('키워드를 입력해주세요!');
+          return false;
+        }
 
-      // if (!Place.replace(/^\s+|\s+$/g, '')) {
-      //   alert('키워드를 입력해주세요!');
-      //   return false;
-      // }
-
-      // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-      ps.keywordSearch(Place, placesSearchCB);
+        // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+        ps.keywordSearch(Place, placesSearchCB);
+      }
     }
 
     // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
@@ -53,10 +56,12 @@ export function LandingPage() {
       }
       else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         alert('검색 결과가 존재하지 않습니다.');
+        setInputText("");
         return;
       }
       else if (status === kakao.maps.services.Status.ERROR) {
         alert('검색 결과 중 오류가 발생했습니다.');
+        setInputText("");
         return;
       }
 
@@ -65,7 +70,7 @@ export function LandingPage() {
     // 검색 결과 목록과 마커를 표출하는 함수입니다
     function displayPlaces(places) {
       var listEl = document.getElementById('placesList'),
-        menuEl = document.getElementById('menu_wrap'),
+        menuEl = document.getElementById('menu_wrap2'),
         fragment = document.createDocumentFragment(),
         listStr = '';
 
@@ -74,23 +79,14 @@ export function LandingPage() {
 
       for (var i = 0; i < places.length; i++) {
 
-        // 마커를 생성하고 지도에 표시합니다
-        // var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
         var itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
-
-        // let form_2 = document.querySelector('#form_2');
 
         (function (address_name, lat, lng, place_name) {
           itemEl.onclick = function () {
-            // setPlace(address_name);
-            // setInputText(address_name);
-
-            // e.preventDefault();
-            // setPlace(address_name);
-            setClickPlace(address_name)
+            setClickPlace(address_name);
             setLat(lat);
             setLng(lng);
-            setName(place_name)
+            setName(place_name);
 
           }
         })(places[i].address_name, places[i].y, places[i].x, places[i].place_name);
@@ -119,7 +115,6 @@ export function LandingPage() {
 
       return el;
     }
-
 
     // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
     function displayPagination(pagination) {
@@ -162,11 +157,19 @@ export function LandingPage() {
 
   const onChange = (e) => {
     setInputText(e.target.value);
+    let ser = document.querySelector('#ser');
+    ser.type = "submit"
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setPlace(InputText);
+  }
+
+  function removeAllChildNods(el) {
+    while (el.hasChildNodes()) {
+      el.removeChild(el.lastChild);
+    }
   }
 
   function getAddr(lat, lng) {
@@ -178,8 +181,30 @@ export function LandingPage() {
         console.log(result[0].address.address_name);       //콘솔창에 현재위치
 
         let addr = result[0].address.address_name;
-        setInputText(addr);
-        // setLocation(addr);
+
+        let geocoder = new kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(addr, function (result, status) {
+
+          // 정상적으로 검색이 완료됐으면
+          if (status === kakao.maps.services.Status.OK) {
+
+            var listEl = document.getElementById('placesList'),
+              paginationEl = document.getElementById('pagination');
+            removeAllChildNods(listEl);
+            removeAllChildNods(paginationEl);
+
+            let ser = document.querySelector('#ser');
+            ser.type = "button"
+
+            setInputText(addr);
+            setClickPlace(addr);
+            setLat(result[0].y);
+            setLng(result[0].x);
+            setName(addr);
+
+          }
+        })
       }
     }
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
@@ -195,35 +220,28 @@ export function LandingPage() {
     }
   }
 
-  // {/* {() => {{searchPlaces();return false;}}} */ }
-  // {/* {() => { searchPlaces() }} */ }
+  function er() {
+    setInputText("");
+  }
 
   return (
     <div className='start_b'>
       <hr style={{
         margin: '20px'
       }}></hr>
-
-      {/* <form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="formBasicEmail" >
-          <Form.Control placeholder='주소를 입력하세요' onChange={onChange} value={InputText} />
-        </Form.Group>
-        <Button type="submit"><img height="20px" src={SearchIcon} /></Button>
-      </form> */}
-
       <div className="map_wrap">
         <ClickAdd searchPlace={clickPlace} InputText={InputText} lat={lat} lng={lng} name={name} />
         <div id="menu_wrap2" className="bg_white">
           <div className="option">
             <div>
-              {/* <form id="form_2" onSubmit={() => { searchPlaces() }}> */}
               <form id="form_2" onSubmit={handleSubmit}>
-                <button onClick={() => { set_loc() }}
+                <button type="button" onClick={() => { set_loc() }}
                   style={{
                     margin: '5px'
-                  }}>현재 위치</button>
-                <input type="text" onChange={onChange} value={InputText} id="keyword" size="32"></input>
-                <button type="submit">검색하기</button>
+                  }}>현위치</button>
+                <input type="text" placeholder='출발지를 입력해주세요.' onChange={onChange} value={InputText} id="keyword" size="30"></input>
+                <button type="button" onClick={() => { er() }}>지우기</button>
+                <button type="submit" id="ser">검색</button>
               </form>
             </div>
           </div>

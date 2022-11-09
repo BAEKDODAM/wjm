@@ -20,7 +20,8 @@
 
 .start_b>div>div>div>div>button {
     //.addbtn
-    margin: 10px auto;
+    margin: 5px auto;
+    padding: 0 5px;
 }
 
 .start_b>div>div>div>div>div>div {
@@ -129,14 +130,14 @@
 .map_wrap {
     position: relative;
     width: 100%;
-    height: 600px //530px
+    height: 800px //530px
 }
 
 #sta_wrap {
     position: absolute;
-    // top: 0;
-    left: 0;
-    bottom: 0;
+    top: 0;
+    right: 10px;
+    // bottom: 0;
     width: 150px;
     height: 140px; //510이 최대 165
     margin: 10px 0 30px 10px;
@@ -153,13 +154,16 @@
     justify-content: space-evenly;
 }
 
+//ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ출발지 추가
+
 #menu_wrap {
     position: absolute;
-    // top: 0;
-    right: 10px;
-    bottom: 0;
+    top: 0;
+    // right: 10px;
+    // bottom: 0;
+    left: 0;
     width: 150px;
-    height: 165px; //510이 최대 165
+    height: 300px; //510이 최대 165 최소
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -191,7 +195,7 @@
     right: 10px;
     // bottom: 0;
     width: 370px;
-    height: 165px; //510이 최대 165
+    height: 580px; //510이 최대 165
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -276,4 +280,35 @@
     font-weight: bold;
     cursor: default;
     color: #777;
+}
+
+//ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 지역구 다시선택 버튼
+
+#re_button {
+    position: absolute;
+    top: 0;
+    right: 100px;
+    width: 150px;
+    height: 40px; //510이 최대 165
+    margin: 10px 0 30px 10px;
+    padding: 5px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    font-size: 12px;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.area {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #888;
+    border-radius: 3px;
+    font-size: 12px;
+    top: -5px;
+    left: 15px;
+    padding: 2px;
 }
