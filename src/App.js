@@ -9,10 +9,10 @@ import { Routes, Route, Link } from 'react-router-dom'
 import Login from './pages/login';
 import Map from './pages/map';
 import Start from './pages/start';
-import Mapcopy from './pages/mapcopy';
 import Setloc from './pages/setloc';
 import Find from './pages/find';
 import Test from './pages/test';
+import Mapcopy from './components/mapSearch/mapcopy';
 function App() {
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;
