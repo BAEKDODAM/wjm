@@ -4,8 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import SearchIcon from '../../images/search.png';
 import { Routes, Route, Link } from 'react-router-dom'
-
-
+import searchBtn from '../../images/search.png'
+import Pointer from '../../images/pointer.png'
+import Target from '../../images/target.png'
 const { kakao } = window;
 
 export function LandingPage(props) {
@@ -232,12 +233,12 @@ export function LandingPage(props) {
             <div>
               {/* <form id="form_2" onSubmit={() => { searchPlaces() }}> */}
               <form id="form_2" onSubmit={handleSubmit}>
-                <button onClick={() => { set_loc() }}
+                <button className='sBtn' onClick={() => { set_loc() }}
                   style={{
                     margin: '5px'
-                  }}>현재 위치</button>
-                <input type="text" onChange={onChange} value={InputText} id="keyword" size="32"></input>
-                <button type="submit">검색하기</button>
+                  }}><img src={Target}  width='25px'></img></button>
+                <input type="text" onChange={onChange} value={InputText} id="keyword" size="32" ></input>
+                <button type="submit" className='sBtn'><img src={searchBtn} width="18px"></img></button>
               </form>
             </div>
           </div>

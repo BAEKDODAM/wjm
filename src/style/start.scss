@@ -13,9 +13,13 @@
     padding-top: 40px;
 }
 
-.start_b>div {
+.start_bd{
+    margin-top: 10px !important;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .start_b>div>div>div>div>button {
@@ -35,7 +39,7 @@
 
 .addbtn {
     height: 36px;
-    width: 120px;
+    width: 250px;
     font-size: large;
 }
 
@@ -100,25 +104,24 @@
 .submitAddress {
     text-align: center;
     // margin-bottom: 30px;
-    padding: 15px;
+    padding-top : 9px !important;
+    padding-bottom: 9px !important;
     border: 1px solid rgb(251, 180, 90);
     border-radius: 15px;
     margin: 10px auto;
-    width: 120px;
+    width: 250px;
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
 }
-.submitAddress>div{
-    margin: auto;
-}
+
 .deleteBtn{
-    background-color: white;
-    border: solid 2px #fff2dd;
-    padding-left: 7px;
-    padding-right: 7px;
-    color: rgb(251, 180, 90);
-    font-weight: 500;
-    //font-size: 20px;
+    background-color: transparent;
+    border: none;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+    color: rgb(255, 160, 36);
+    font-weight: 600;
 }
 
 .searchBtn {
@@ -183,12 +186,15 @@
 
 #menu_wrap {
     position: absolute;
+    top: 255px;
+    width: 370px;
     // top: 0;
     right: 10px;
-    bottom: 0;
-    width: 150px;
-    height: 165px; //510이 최대 165
-    margin: 10px 0 30px 10px;
+    //bottom: 0;
+    //width: 150px;
+    //height: 165px; //510이 최대 165px
+    max-height: 250px;
+    margin: 20px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.7);
@@ -219,7 +225,7 @@
     right: 10px;
     // bottom: 0;
     width: 370px;
-    height: 165px; //510이 최대 165
+    height: 250px;//165px; //510이 최대 165px
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -306,3 +312,27 @@
     color: #777;
 }
 
+// ------------핫플 리스트
+.hotPlace {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px;
+    max-width: 1300px;
+    margin: auto;
+}
+.hotPlaceTitle{
+    font-size: 20px;
+    text-align: center;
+    padding: 35px;
+}
+.hotPlace1{
+    text-align: center;
+    padding: 20px;
+    border: solid 1px rgb(255, 160, 36);
+    margin: 15px;
+    border-radius: 20px;
+}
+.hpName{
+    font-size: 15px;
+}

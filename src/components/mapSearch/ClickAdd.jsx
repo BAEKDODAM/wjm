@@ -1,8 +1,10 @@
 // import { NULL } from 'node-sass';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Plus from '../../images/plus.png';
 import { Mapcopy } from './mapcopy';
 import STA from './sta.json';
+import { Routes, Route, Link } from 'react-router-dom'
 
 const { kakao } = window
 
@@ -25,6 +27,7 @@ export function ClickAdd({ searchPlace, InputText, lat, lng, name }) {
     let [addLoc, setAddLoc] = useState([]); //추가된 주소
     let [latlng, setLatlng] = useState([]); //입력 좌표
     let [addLatlng, setAddLatlng] = useState([]);  // 추가 좌표
+    let [hotPlace, setHotPlace] = useState([]);
     // let [n, setN] = useState([]);
     let mmm = [];
 
@@ -362,6 +365,7 @@ export function ClickAdd({ searchPlace, InputText, lat, lng, name }) {
         var nth_gu = 0;
 
         let callback = function (result, status) {
+            midAreaHot(result[0].address.region_2depth_name) // *********
             if (status === kakao.maps.services.Status.OK) {
                 console.log("무게중심 지역구 >>", result[0].address.region_2depth_name);       //콘솔창에 현재위치
 
@@ -468,7 +472,7 @@ export function ClickAdd({ searchPlace, InputText, lat, lng, name }) {
             sta_wrap.className = "bg_white";
             overlay.appendChild(sta_wrap);
 
-            info.innerHTML = '<div style="padding:5px;">' + select + '에 추천역 ' + info_len + '개</div>';
+            info.innerHTML = '<div style="padding:5px;">' + select + ' 인근 추천역 ' + info_len + '개</div>';
             sta_wrap.appendChild(info);
 
             sta_wrap.appendChild(hr);
@@ -491,35 +495,87 @@ export function ClickAdd({ searchPlace, InputText, lat, lng, name }) {
         }
         geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
     }
-
+    function midAreaHot(midArea){
+        
+        let seoulGu = ['도봉구','강북구','노원구','성북구','중랑구','은평구','서대문구','종로구','동대문구','중구','성동구','광진구','마포구','용산구','강서구','양천구','영등포구','구로구','금천구','관악구','동작구','서초구','강남구','송파구','강동구']
+        if (seoulGu.includes(midArea)){
+            axios.get("http://3.37.178.135/api/restaurants", {
+                params:{ area: midArea} //
+            })
+            .then((i)=>{
+                let copy=[]
+                for(let j in i.data){
+                    copy.push(i.data[j])
+                }
+                setHotPlace(copy)
+                // hotPlace 리스트에 담기(setHotPlace(copy)-> 뒤에 리턴문 앞에 리스트 map해서 <div> 출력하도록 코드작성
+            })
+            .catch(()=>{
+                console.log("실패")
+            })
+        }
+    }
+    let geocoder = new kakao.maps.services.Geocoder();
+    let hpx=0
+    let hpy=0
+    let callback = function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            console.log("geocoder",result);
+            hpx=result[0].x
+            hpy=result[0].y
+            console.log('좌표',hpx, hpy)
+        }
+    };
+    geocoder.addressSearch("서울 마포구 토정로 318 영우빌딩 1층 모연 마포본점",callback)
     return (
         <>
             <div id="myMap"
-                // style={{
-                //     width: '350px',
-                //     height: '400px',
-                // }}
                 style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', }}>
             </div>
 
 
             <div id="overlay">
                 <div id="menu_wrap" className="bg_white">
-                    <div className='start_b'>
-                        <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
-                        <button className='addbtn' onClick={() => buttonAdd(searchPlace)}>출발지 추가하기</button>
-                        <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div>
+                    <div className='start_bd'>
+                        <button className='addbtn' onClick={() => buttonAdd(searchPlace)}>출발지 추가</button>
+                        <button className='addbtn' onClick={() => start(addLatlng, addLoc)}>중간 장소 찾기</button>
+                        <div>{addLoc.map((a,i)=>(
+                            
+                            <div key={i} className='submitAddress'>
+                                <div>{a}</div>
+                                <button className="deleteBtn" onClick={()=>{
+                                    let copy=[...addLoc];
+                                    let copy2=[...addLatlng];
+                                    copy.splice(i,1)
+                                    copy2.splice(i,1)
+                                    setAddLoc(copy);
+                                    setAddLatlng(copy2)
+                                }}>X</button>
+                            </div>))}
+                        </div>
+                        <div>{/*addLoc.map((a) => (<div key={a} className='submitAddress'>{a}<></></div>))*/}</div>
                     </div>
                     <hr></hr>
                 </div>
             </div>
+            
+            <div className='hotPlace'>
+                { hotPlace.length>0 ? <div className='hotPlaceTitle'>hot place list</div>:null }
+                {
+                    hotPlace.map((a,i)=>(
+                        //geocoder.addressSearch(a.address)
+                        <div className='hotPlace1' key={i} onClick={()=>{
+                            window.location.href=`https://map.kakao.com/link/search/${a.address}`
+                            }}>
+                            <a className='hpName'>{a.name}</a>
+                            <br/>{a.address}
+                            <br/>{a.keyword}
+                        </div>
+                    ))
+                }
+            </div>
 
             {/* <Mapcopy title={addLoc} latlng={addLatlng} /> */}
-
-            {/* <button className='addbtn' onClick={() => buttonAdd(InputText)}>+</button>
-            <button onClick={() => start(addLatlng, addLoc)}>중간 장소 보기</button>
-            <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div> */}
-
         </>
     )
 }

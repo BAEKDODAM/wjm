@@ -1,5 +1,4 @@
 import React, { Component, useState } from 'react';
-import Mapcopy from '../../pages/mapcopy';
 import MidPlace from './midPlace';
 import axios from 'axios';
 //import { useDispatch, useSelector } from 'react-redux';

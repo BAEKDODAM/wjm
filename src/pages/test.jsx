@@ -9,6 +9,7 @@ export function Test() {
                 })
                 .then((i)=>{
                     console.log(i.data)
+                    console.log(i.data[0].name)
                 })
                 .catch(()=>{
                     console.log("실패")
