@@ -3,7 +3,6 @@
 }
 
 .start_b {
-    //height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,9 +12,13 @@
     padding-top: 40px;
 }
 
-.start_b>div {
+.start_bd {
+    margin-top: 10px !important;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .start_b>div>div>div>div>button {
@@ -36,7 +39,7 @@
 
 .addbtn {
     height: 36px;
-    width: 120px;
+    width: 250px;
     font-size: large;
 }
 
@@ -67,11 +70,6 @@
 
 }
 
-/*.start_b>form>div>input:focus, .start_b>form>div>input:active {
-    border-color: #FBEFDA;
-    box-shadow: 0 0 0 .25rem #FFEBD7;
-    border-right: none;
-}*/
 .start_b>form>div>input:active,
 .start_b>form>div>input:focus,
 .start_b>form>div>input {
@@ -100,12 +98,44 @@
 
 .submitAddress {
     text-align: center;
-    // margin-bottom: 30px;
-    padding: 15px;
+    padding: 9px !important;
     border: 1px solid rgb(251, 180, 90);
     border-radius: 15px;
     margin: 10px auto;
-    width: 120px;
+    width: 250px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.deleteBtn {
+    background-color: transparent;
+    border: none;
+    padding-left: 7px !important;
+    padding-right: 7px !important;
+    color: rgb(255, 160, 36);
+    font-weight: 600;
+}
+
+.searchBtn {
+    background-color: #fff2dd;
+    width: 40px;
+    padding: 15px;
+    margin: 20px;
+    border-radius: 15px;
+    border: 1px solid #fff2dd;
+}
+
+.searchBtn:hover {
+    box-shadow: 0 0 2px .07rem rgb(251, 180, 90);
+    // margin: 10px auto;
+    width: 40px;
+}
+
+#form_2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
 
@@ -135,10 +165,9 @@
 
 #sta_wrap {
     position: absolute;
-    top: 0;
-    right: 10px;
-    // bottom: 0;
-    width: 150px;
+    left: 0;
+    bottom: 0;
+    width: 200px;
     height: 140px; //510이 최대 165
     margin: 10px 0 30px 10px;
     padding: 5px;
@@ -159,11 +188,9 @@
 #menu_wrap {
     position: absolute;
     top: 0;
-    // right: 10px;
-    // bottom: 0;
     left: 0;
-    width: 150px;
-    height: 300px; //510이 최대 165 최소
+    width: 300px; //150px;
+    max-height: 300px;
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -193,9 +220,8 @@
     position: absolute;
     top: 0;
     right: 10px;
-    // bottom: 0;
     width: 370px;
-    height: 580px; //510이 최대 165
+    height: 300px; //580px; //510이 최대 165
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -311,4 +337,33 @@
     top: -5px;
     left: 15px;
     padding: 2px;
+}
+
+//ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 핫플 리스트
+
+.hotPlace {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px;
+    max-width: 1300px;
+    margin: auto;
+}
+
+.hotPlaceTitle {
+    font-size: 20px;
+    text-align: center;
+    padding: 35px;
+}
+
+.hotPlace1 {
+    text-align: center;
+    padding: 20px;
+    border: solid 1px rgb(255, 160, 36);
+    margin: 15px;
+    border-radius: 20px;
+}
+
+.hpName {
+    font-size: 15px;
 }

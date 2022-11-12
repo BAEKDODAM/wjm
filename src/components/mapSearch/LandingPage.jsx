@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import ClickAdd from './ClickAdd';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import SearchIcon from '../../images/search.png';
-// import { Routes, Route, Link } from 'react-router-dom'
+import searchBtn from '../../images/search.png'
+import Target from '../../images/target.png'
+
 const { kakao } = window;
 
 export function LandingPage() {
   const [InputText, setInputText] = useState('')
   const [Place, setPlace] = useState('') //지도에 반영
-  let [location, setLocation] = useState([]);
   let [clickPlace, setClickPlace] = useState([]);
   let [name, setName] = useState([]);
   let [lat, setLat] = useState([]);
@@ -21,8 +19,8 @@ export function LandingPage() {
 
     let container = document.getElementById('myMap'),
       mapOption = {
-        center: new kakao.maps.LatLng(37.566826004661, 126.978652258309), // 지도의 중심좌표
-        level: 9 // 지도의 확대 레벨
+        center: new kakao.maps.LatLng(37.566826004661, 126.978652258309),
+        level: 9
       };
 
     // 지도를 생성합니다    
@@ -155,7 +153,7 @@ export function LandingPage() {
     }
   }, [Place]);
 
-  const onChange = (e) => {
+  const onChange = (e) => {        //엔터누르면 현재위치 안되게하기
     setInputText(e.target.value);
     let ser = document.querySelector('#ser');
     ser.type = "submit"
@@ -235,13 +233,13 @@ export function LandingPage() {
           <div className="option">
             <div>
               <form id="form_2" onSubmit={handleSubmit}>
-                <button type="button" onClick={() => { set_loc() }}
+                <button className='searchBtn' type="button" onClick={() => { set_loc() }}
                   style={{
                     margin: '5px'
-                  }}>현위치</button>
-                <input type="text" placeholder='출발지를 입력해주세요.' onChange={onChange} value={InputText} id="keyword" size="30"></input>
-                <button type="button" onClick={() => { er() }}>지우기</button>
-                <button type="submit" id="ser">검색</button>
+                  }}><img src={Target} width='25px'></img></button>
+                <input type="text" placeholder=' 출발지를 입력해주세요!' onChange={onChange} value={InputText} id="keyword" size="30"></input>
+                <button className='searchBtn' type="button" onClick={() => { er() }}>지우기</button>
+                <button className='searchBtn' type="submit" id="ser"><img src={searchBtn} width="18px"></img></button>
               </form>
             </div>
           </div>
