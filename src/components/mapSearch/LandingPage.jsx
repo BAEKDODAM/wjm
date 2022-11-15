@@ -37,8 +37,7 @@ export function LandingPage() {
           return false;
         }
 
-        // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-        ps.keywordSearch(Place, placesSearchCB);
+        ps.keywordSearch(Place, placesSearchCB); // 키워드로 장소검색 요청
       }
     }
 
@@ -153,7 +152,7 @@ export function LandingPage() {
     }
   }, [Place]);
 
-  const onChange = (e) => {        //엔터누르면 현재위치 안되게하기
+  const onChange = (e) => {        //엔터누르면 현재위치로 검색안되게하기
     setInputText(e.target.value);
     let ser = document.querySelector('#ser');
     ser.type = "submit"
@@ -170,7 +169,7 @@ export function LandingPage() {
     }
   }
 
-  function getAddr(lat, lng) {
+  function getAddr(lat, lng) {    // 현재위치 찾는 함수
     let geocoder = new kakao.maps.services.Geocoder();
 
     let coord = new kakao.maps.LatLng(lat, lng);
@@ -184,10 +183,9 @@ export function LandingPage() {
 
         geocoder.addressSearch(addr, function (result, status) {
 
-          // 정상적으로 검색이 완료됐으면
           if (status === kakao.maps.services.Status.OK) {
 
-            var listEl = document.getElementById('placesList'),
+            var listEl = document.getElementById('placesList'),    // 기존에 출력된 장소 목록 지우기
               paginationEl = document.getElementById('pagination');
             removeAllChildNods(listEl);
             removeAllChildNods(paginationEl);
@@ -200,7 +198,6 @@ export function LandingPage() {
             setLat(result[0].y);
             setLng(result[0].x);
             setName(addr);
-
           }
         })
       }
@@ -213,12 +210,14 @@ export function LandingPage() {
       navigator.geolocation.getCurrentPosition(function (position) {
         let current_lat = position.coords.latitude,
           current_lon = position.coords.longitude;
+
         getAddr(current_lat, current_lon);
+
       })
     }
   }
 
-  function er() {
+  function er() {    //검색창 지우개
     setInputText("");
   }
 
