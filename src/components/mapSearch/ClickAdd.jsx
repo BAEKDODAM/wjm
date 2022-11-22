@@ -639,6 +639,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
             back.innerHTML = '지역구 다시 선택하기';
             back.id = "back_btn";
+            back.className = 'addbtn'         // css 추가
             back.addEventListener("click", function () {
                 selectArea2(WGS_points, Title, center, center_name, head);         // 지역구 다시 선택하기
             })

@@ -41,6 +41,8 @@
     height: 36px;
     width: 250px;
     font-size: large;
+    margin: 5px auto; //**
+    padding: 0 5px; //**
 }
 
 .addbtn {
@@ -176,8 +178,9 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 200px;
-    height: 140px; //510이 최대 165
+    width: 260px;
+    // height: 140px; //510이 최대 165
+    max-height: 400px;
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;
@@ -190,6 +193,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+}
+
+#info,
+#new_sta {
+    padding: 10px;
 }
 
 //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ출발지 추가
