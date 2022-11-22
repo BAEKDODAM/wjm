@@ -7,20 +7,19 @@ import SEOUL from './seoul.json';
 const { kakao } = window
 
 export function ClickAdd({ searchPlace, lat, lng, name }) {
-    let [location, setLocation] = useState([]);    //입력된 주소
-    let [addLoc, setAddLoc] = useState([]);    //추가된 주소
-    let [latlng, setLatlng] = useState([]);    //입력 좌표
-    let [addLatlng, setAddLatlng] = useState([]);    // 추가 좌표
-    let [hotPlace, setHotPlace] = useState([]);
-    let [Name, setName] = useState([]);    //입력된 출발지 이름
-    let [addName, setAddName] = useState([]);    // 추가된 출발지 이름
-    let [index, setIndex] = useState([]);    // 현재 인덱스
-    let mmm = []; // 소요시간 전체
-    let www = []; // 가중치 추가된
-    let kkk = []; // 추가 안된
-    let ggg = []; // 가중치 값
-    let avgTime = [];
-    let endStation = [];
+    let [location, setLocation] = useState([]);       // 입력된 주소
+    let [addLoc, setAddLoc] = useState([]);           // 추가된 주소
+    let [latlng, setLatlng] = useState([]);           // 입력 좌표
+    let [addLatlng, setAddLatlng] = useState([]);     // 추가 좌표
+    let [Name, setName] = useState([]);               // 입력된 출발지 이름
+    let [addName, setAddName] = useState([]);         // 추가된 출발지 이름
+    let [hotPlace, setHotPlace] = useState([]);       // 추천 매장
+    // let [index, setIndex] = useState([]);          // 현재 인덱스
+    let mmm = [];           // 소요시간 전체
+    let www = [];           // 가중치 추가된
+    let ggg = [];           // 가중치 값
+    let avgTime = [];       // 최소 소요시간
+    let endStation = [];    // 도착역
 
     useEffect(() => {
         if (lat != null) {
@@ -34,7 +33,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
             let new_location = [...location];
             new_location.unshift(searchPlace); //검색한 주소를 새로운 배열에 선언
-            setLocation(new_location); // 검색 될 때 마다 값 바꿈
+            setLocation(new_location);         // 검색 될 때 마다 값 바꿈
 
             let coords = new kakao.maps.LatLng(lat, lng);
 
@@ -99,8 +98,8 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
     const start = (addLatlng, addName) => {
         const WGS_points = [],   // 위경도 좌표계 리스트
-            WTM_points = [],  // 직교 좌표계 리스트
-            Title = [];        // 출발지 이름 리스트
+            WTM_points = [],     // 직교 좌표계 리스트
+            Title = [];          // 출발지 이름 리스트
 
         for (let m = 0; m < addLatlng.length; m++) {
             Title[m] = addName[m];
@@ -113,7 +112,6 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
             mmm = []; // 소요시간 전체
             www = []; // 가중치 추가된
-            kkk = []; // 추가 안된
             ggg = []; // 가중치 값
             avgTime = [];
             endStation = [];
@@ -122,28 +120,28 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
             //     menu_wrap2 = document.querySelector('#menu_wrap2');
             // map_wrap.removeChild(menu_wrap2);
 
-            gtot(WGS_points, WTM_points);   // WGS좌표계 리스트를 WTM좌표계 리스트로 변환
+            gtot(WGS_points, WTM_points);                // WGS좌표계 리스트를 WTM좌표계 리스트로 변환
 
             // console.log("직교 좌표계로 변환된 리스트", WTM_points);
 
-            let split_l = splitList(WTM_points).ll,     // 중심선 기준 왼쪽, 오른쪽으로 리스트 나누기
+            let split_l = splitList(WTM_points).ll,      // 중심선 기준 왼쪽, 오른쪽으로 리스트 나누기
                 split_r = splitList(WTM_points).lr;
 
-            var new_l = sort(split_l).asc,    // 리스트 정렬 
+            var new_l = sort(split_l).asc,               // 리스트 정렬 
                 new_r = sort(split_r).des;
 
             // console.log("기준선 왼쪽 리스트", new_l);
             // console.log("기준선 오른쪽 리스트", new_r);
 
-            var poly_points = new_l.concat(new_r);  // 정렬된 두개 리스트 합침
+            var poly_points = new_l.concat(new_r);        // 정렬된 두개 리스트 합침
 
             // console.log("정렬된 리스트", poly_points);
 
-            if (WTM_points.length === 2) {      // 사용자 두명일 떄 무게중심 좌표 
+            if (WTM_points.length === 2) {                // 사용자 두명일 떄 무게중심 좌표 
                 var center_x = getCentroid(poly_points).x2,
                     center_y = getCentroid(poly_points).y2;
             }
-            else {                              // 두명 이상일 떄 무게중심 좌표 
+            else {                                        // 두명 이상일 떄 무게중심 좌표 
                 var center_x = getCentroid(poly_points).x,
                     center_y = getCentroid(poly_points).y;
             }
@@ -155,7 +153,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
         console.log("무게중심 좌표(WTM)", center_x, center_y);
 
-        let c_Lat = ttog(center_x, center_y).lat,   // 현재 WTM좌표계인 무게중심 좌표를 다시 WGS좌표계로 변환
+        let c_Lat = ttog(center_x, center_y).lat,         // 현재 WTM좌표계인 무게중심 좌표를 다시 WGS좌표계로 변환
             c_Lng = ttog(center_x, center_y).lng;
 
         let p_Lat = ttog(center_x, center_y).lat,
@@ -165,78 +163,235 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
         console.log("장소명", Title);
 
         let center = [];
-        let h = [];
+        let head = [];
+        let cnt = 0;
 
-        for (var cnt = 0; cnt < 2; cnt++) {
-            for (let i = 0; i < WGS_points.length; i++) {
+        do {
+            for (let i = 0; i < WGS_points.length; i++) {                      // 처음 i = 0 일때는 무게중심점을 돌리는거임
                 searchPubTransPathAJAX(WGS_points, Title, c_Lat, c_Lng, i);    // 환승횟수, 소요시간 기반 가중치 추가할 장소 찾기
             }
-            if (www[0][0] != null) {
+
+            // console.log("가중치 인덱스", www);
+            // console.log("가중치 값 리스트 : ", ggg);
+
+            if (ggg[0][0] != 1) {                                              // 가중치가 있으면 (평균 소요시간보다 큰 출발지가 있으면)
                 var w = [];
                 for (let i = 0; i < www[0].length; i++) {
-                    w.push([Title[www[0][i]], ggg[0][i]]);
+                    w.push([Title[www[0][i]], ggg[0][www[0][i]]]);
                 }
-                var hh = '';
+                var new_head = '';
                 for (let i = 0; i < w.length; i++) {
-                    hh += w[i][0];
+                    new_head += w[i][0];
                     if ((i + 1) != w.length) {
-                        hh += ', '
+                        new_head += ', '
                     }
                 }
-                h.push(hh);
-                console.log(cnt + " 번째 탐색 : 가중치 추가 리스트", w);
+                head.push(new_head);
+                console.log(cnt + 1 + " 번째 탐색 : 가중치 출발지 이름 리스트", w);
             }
-            else if ((www[0][0] == null) && (cnt == 1)) {
-                console.log(cnt + " 번째 탐색 : 가중치 추가할 출발지 없음");
-                hh = '무게중심';
-                h.push(hh);
-                center.push([p_Lat, p_Lng]);
-            }
-            else if ((www[0][0] == null) && (cnt == 0)) {
-                console.log(cnt + " 번째 탐색 : 가중치 추가할 출발지 없음");
-                hh = '무게중심';
-                h.push(hh);
+            else if (ggg[0][0] == 1) {                                          //  가중치가 없으면( 1 곱하면 그대로니까 값은 그대로)
+                console.log(cnt + 1 + " 번째 탐색 : 가중치 추가할 출발지 없음");
+                new_head = '무게중심';
+                head.push(new_head);
                 center.push([p_Lat, p_Lng]);
                 center.push([p_Lat, p_Lng]);
-                cnt = 1;
+                break;
             }
 
-            // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ가중치 추가하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            var weigtVec_x = getUnitvec(WTM_points, center_x, center_y, ggg).weigtVec_x,
+                weigtVec_y = getUnitvec(WTM_points, center_x, center_y, ggg).weigtVec_y;
+            var unitVec = getUnitvec(WTM_points, center_x, center_y, ggg).unitVec;
 
-            var weigtVec_x = getUnitvec(WTM_points, center_x, center_y, www, kkk, ggg).weigtVec_x,
-                weigtVec_y = getUnitvec(WTM_points, center_x, center_y, www, kkk, ggg).weigtVec_y;
-
-            // console.log(cnt + " 번째 탐색 가중치 추가된 무게중심 단위벡터(가중치 없으면 0에 수렴)", weigtVec_x, weigtVec_y);
+            console.log(cnt + 1 + " 번째 탐색 각 단위벡터 리스트", unitVec);
+            console.log(cnt + 1 + " 번째 탐색 가중치 추가된 무게중심 단위벡터(가중치 없으면 0에 수렴)", weigtVec_x, weigtVec_y);
 
             var center_x2 = getNewcenter(weigtVec_x, center_x, weigtVec_y, center_y).center_x2,
                 center_y2 = getNewcenter(weigtVec_x, center_x, weigtVec_y, center_y).center_y2;
 
-            console.log(cnt + " 번째 탐색 : 중간지점(WTM)", center_x2, center_y2);
+            console.log(cnt + 1 + " 번째 탐색 : 중간지점(WTM)", center_x2, center_y2);
 
             c_Lat = ttog(center_x2, center_y2).lat;   // 현재 WTM좌표계인 무게중심 좌표를 다시 WGS좌표계로 변환
             c_Lng = ttog(center_x2, center_y2).lng;
 
-            console.log(cnt + " 번째 탐색 : 중간지점(WGS)", c_Lat, c_Lng);
+            console.log(cnt + 1 + " 번째 탐색 : 중간지점(WGS)", c_Lat, c_Lng);
 
             console.log("< 새로운 중간지점은 처음 무게중심좌표와 같을 수 있음 >");
 
             center_x = new_gtot(c_Lat, c_Lng).x;
             center_y = new_gtot(c_Lat, c_Lng).y;
 
-            // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
             mmm = []; // 소요시간 전체
             www = []; // 가중치 추가된
-            kkk = []; // 추가 안된
             ggg = []; // 가중치 값
 
-            center.push([c_Lat, c_Lng])
-        }
-        // console.log("가중치 추가할 출발지 리스트", h);
-        // console.log("평균 소요시간 리스트", avgTime);
+            center.push([c_Lat, c_Lng])    // 새로운 중간지점을 새 배열에 추가
 
-        selectArea(WGS_points, Title, center[0][0], center[0][1], center[1][0], center[1][1], h);    // 지역구 선택 하기 및 인기역 & 추천매장 보여주기
-        // selectArea(WGS_points, Title, c_Lat, c_Lng, c_Lat2, c_Lng2);
+            if (cnt == 1) {
+                center.pop();
+                center.push([p_Lat, p_Lng])
+                new_head = '무게중심';
+                head.pop();
+                head.push(new_head);
+                break;
+            }
+            cnt++;
+        }
+        while (cnt < 4);
+
+        // console.log("평균 최소 소요 시간 리스트 : ", avgTime);
+        // console.log("도착역 리스트 : ", endStation);
+        // console.log("최종 중간 좌표 리스트 : ", center);
+
+        let center_name = [];
+        let geocoder = new kakao.maps.services.Geocoder();
+
+        let coord1 = new kakao.maps.LatLng(center[0][0], center[0][1]);
+        let callback1 = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                center_name.push(result[0].address.region_2depth_name);
+            }
+            let coord2 = new kakao.maps.LatLng(center[1][0], center[1][1]);
+            let callback2 = function (result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    center_name.push(result[0].address.region_2depth_name);
+                }
+                // console.log("최종 중간 지역구 리스트 : ", center_name);
+
+                if (center_name[0] == center_name[1]) {
+                    center_name.pop();
+                    center.pop();
+                    selectArea2(WGS_points, Title, center, center_name, head);    // 지역구 선택 하기 및 인기역 & 추천매장 보여주기
+                }
+                else if (center_name[0] != center_name[1]) {
+                    selectArea2(WGS_points, Title, center, center_name, head);    // 지역구 선택 하기 및 인기역 & 추천매장 보여주기
+                }
+            }
+            geocoder.coord2Address(coord2.getLng(), coord2.getLat(), callback2);
+        }
+        geocoder.coord2Address(coord1.getLng(), coord1.getLat(), callback1);
+    }
+
+    function selectArea2(WGS_points, Title, center, center_name, head) {
+        let sta_wrap = document.querySelector('#sta_wrap'),
+            info = document.querySelector('#info');
+
+        sta_wrap.style.display = "none";
+
+        if (info) {
+            while (sta_wrap.hasChildNodes()) {
+                sta_wrap.removeChild(sta_wrap.lastChild);
+            }
+        }
+
+        let data = (SEOUL)["features"];
+        let coordinates = [];    //좌표 저장 배열
+        let name = '';           //행정구 이름
+        let polygons = [];
+
+        var mapContainer = document.getElementById('myMap'),
+            mapOption = {
+                center: new kakao.maps.LatLng(center[0][0], center[0][1]),
+                level: 8
+            };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption),
+            customOverlay = new kakao.maps.CustomOverlay({});
+
+        const displayGu = (coordinates, name, WGS_points, Title, center, center_name, head) => {
+            let path = [];
+            let points = [];
+
+            coordinates[0].forEach((coordinate) => {
+                let point = {};
+                point.x = coordinate[1];
+                point.y = coordinate[0];
+                points.push(point);
+                path.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
+            });
+
+            var polygon = new kakao.maps.Polygon({
+                map: map,
+                path: path,
+                strokeWeight: 2,
+                strokeColor: '#004c80',
+                strokeOpacity: 0.0,
+                fillColor: '#fff',
+                fillOpacity: 0.0
+            });
+
+            polygons.push(polygon);
+
+            for (let i = 0; i < center.length; i++) {
+                if (name === center_name[i]) {
+                    polygon.setOptions({
+                        fillOpacity: 0.7,
+                        strokeOpacity: 0.8
+                    });
+
+                    let color;
+                    if (i == 0) {
+                        color = '#DD1A0B';
+                    }
+                    else if (i == 1) {
+                        color = '#09f';
+                    }
+
+                    kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
+                        polygon.setOptions({ fillColor: color });
+
+                        customOverlay.setContent('<div class="area">' + head[i] + '에 가중치 추가된 중간지점 지역구 : ' + center_name[i] + '</div>');
+                        customOverlay.setPosition(mouseEvent.latLng);
+                        customOverlay.setMap(map);
+                    });
+
+                    kakao.maps.event.addListener(polygon, 'mousemove', function (mouseEvent) {
+                        customOverlay.setPosition(mouseEvent.latLng);
+                    });
+
+                    kakao.maps.event.addListener(polygon, 'mouseout', function () {
+                        polygon.setOptions({ fillColor: '#fff' });
+                        customOverlay.setMap(null);
+                    });
+
+                    kakao.maps.event.addListener(polygon, 'click', function () {
+                        displayLocation(WGS_points, Title, i, center, center_name, head);    // 해당 지역구 클릭하면 추천 역 표시
+                    });
+                }
+
+                var marker_blue = new kakao.maps.Marker({                                    // 중간지점 마커
+                    position: new kakao.maps.LatLng(center[i][0], center[i][1]),
+                    map: map,
+                    clickable: true
+                });
+
+                if (i == 1) {
+                    endStation.push(endStation[i - 1]);
+                    avgTime.push(avgTime[i - 1]);
+                }
+
+                var infowindow_blue = new kakao.maps.InfoWindow({
+                    content: '<div style="width:150px;text-align:center;padding:6px 0;">' + head[i] + '에</br>가중치 추가된 중간지점</br></br>목적지 : ' + endStation[i + 1] + '역</br>평균 소요시간 : ' + avgTime[i + 1] + ' 분</div>'
+                });
+
+                marker_blue.setMap(map);
+
+                (function (marker_blue, infowindow_blue) {
+                    kakao.maps.event.addListener(marker_blue, 'mouseover', function () {
+                        infowindow_blue.open(map, marker_blue);
+                    });
+                    kakao.maps.event.addListener(marker_blue, 'mouseout', function () {
+                        infowindow_blue.close();
+                    });
+                })(marker_blue, infowindow_blue);
+
+            }
+        }
+        data.forEach((val) => {
+            coordinates = val.geometry.coordinates;
+            name = val.properties.SIG_KOR_NM;
+
+            displayGu(coordinates, name, WGS_points, Title, center, center_name, head);
+        });
     }
 
     function searchPubTransPathAJAX(WGS_points, Title, c_Lat, c_Lng, i) {
@@ -306,6 +461,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                     console.log("   ", Title[i], " 에서  최소 소요시간 : ", min_time, " 분");
 
                     mmm.push([i, min_time]);
+
                     // console.log("[출발지 인덱스, 최소 소요시간]", mmm);
 
                     let sum = 0,
@@ -314,9 +470,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                         sum += mmm[i][1]
                     }
 
-                    avg = sum / mmm.length
-
-                    //////////////////////////////////////여기부터 비율 구하기
+                    avg = sum / mmm.length      // 각 출발지의 최소 소요시간 평균
 
                     let rate_sum = 0,
                         rate_avg = 0;
@@ -326,26 +480,50 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
                     rate_avg = rate_sum / mmm.length
 
+                    //----------------(비율 x 단위벡터)로 해봅시다-----------------
+
                     let needW = [],
-                        noW = []
-                    for (let i = 0; i < mmm.length; i++) {
-                        if (mmm[i][1] / sum >= rate_avg * 1.2)     //  mmm[i][1] / sum = rate 
-                            needW.unshift(mmm[i][0])
-                        else
-                            noW.unshift(mmm[i][0])
-                    }
-
-                    let getW = [];
-                    for (let i = 0; i < needW.length; i++) {
-                        getW.unshift((mmm[needW[i]][1] / sum) + 1)
-                    }
-
-                    ////////////////////////////////////////////////////////////
+                        getW = [];
+                    let key = 0;
+                    let needIndex = [];
 
                     if (mmm.length == WGS_points.length) {
-                        www.unshift(needW)
-                        kkk.unshift(noW)
-                        ggg.unshift(getW)
+
+                        for (let i = 0; i < mmm.length; i++) {
+                            if ((mmm[i][1] / sum >= rate_avg)) {    // 비율의 평균값보다 큰 출발지가 있으면
+                                needW.push(mmm[i][0])             // 해당 출발지 인덱스 추가
+                                key = 1;
+                                needIndex.push(mmm[i][0])
+                            }
+                            else {
+                                needIndex.push(100)  //인덱스 구분용 쓰레기값
+                            }
+                        }
+
+                        // console.log("needW", needW);
+                        // console.log("needIndex", needIndex);
+
+                        if (key == 1) {                                 // 비율의 평균값보다 큰 출발지가 있으면 
+                            for (let i = 0; i < mmm.length; i++) {
+                                if (i == needIndex[i]) {                // 각 단위벡터에 소요시간 비율 만큼의 가중치 곱함
+                                    getW.push((mmm[i][1] / sum) * 2)    // 비율의 평균값보다 크면 x 2
+                                }
+                                else {
+                                    getW.push(mmm[i][1] / sum)          // 아니면 그냥 추가
+                                }
+                            }
+                        }
+                        else {                                          // 비율의 평균값보다 큰 출발지가 없으면
+                            for (let i = 0; i < mmm.length; i++)
+                                getW.push(1)                            // 가중치는 없음
+                        }
+                    }
+
+                    //-----------------------------------------------------------
+
+                    if (mmm.length == WGS_points.length) {
+                        www.push(needW)
+                        ggg.push(getW)
                         avgTime.push(Math.round(avg))
                         endStation.push(lastStation)
                         console.log("평균 소요시간 >> ", avg, " 분");
@@ -357,240 +535,23 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
         xhr.send(); //동기호출하기
     }
 
-    function selectArea(WGS_points, Title, c_Lat, c_Lng, c_Lat2, c_Lng2, h) {
-
-        let sta_wrap = document.querySelector('#sta_wrap'),
-            info = document.querySelector('#info');
-
-        sta_wrap.style.display = "none";
-
-        if (info) {
-            while (sta_wrap.hasChildNodes()) {
-                sta_wrap.removeChild(sta_wrap.lastChild);
-            }
-        }
-
-        let data = (SEOUL)["features"];
-        let coordinates = [];    //좌표 저장 배열
-        let name = '';           //행정구 이름
-        let polygons = [];
-
-        var mapContainer = document.getElementById('myMap'),
-            mapOption = {
-                center: new kakao.maps.LatLng(c_Lat, c_Lng),
-                level: 8
-            };
-
-        var map = new kakao.maps.Map(mapContainer, mapOption),
-            customOverlay = new kakao.maps.CustomOverlay({});
-
-        const displayGu = (coordinates, name, WGS_points, Title, c_Lat, c_Lng, c_Lat2, c_Lng2, h) => {
-            let path = [];
-            let points = [];
-
-            coordinates[0].forEach((coordinate) => {
-                let point = {};
-                point.x = coordinate[1];
-                point.y = coordinate[0];
-                points.push(point);
-                path.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
-            });
-
-            var polygon = new kakao.maps.Polygon({
-                map: map,
-                path: path,
-                strokeWeight: 2,
-                strokeColor: '#004c80',
-                strokeOpacity: 0.0,
-                fillColor: '#fff',
-                fillOpacity: 0.0
-            });
-
-            polygons.push(polygon);
-
-            let geocoder = new kakao.maps.services.Geocoder();
-
-            let coord1 = new kakao.maps.LatLng(c_Lat, c_Lng),
-                coord2 = new kakao.maps.LatLng(c_Lat2, c_Lng2);
-
-            let center1,
-                center2;
-
-            var new_overlay1,
-                new_overlay2,
-                new_infowindow1,
-                new_infowindow2;
-
-            let callback1 = function (result, status) {                     //무게중심 지역구 다각형
-                if (status === kakao.maps.services.Status.OK) {
-                    center1 = result[0].address.region_2depth_name;
-                }
-
-                if ((h[0] != '무게중심') && (h[1] != '무게중심')) {
-                    new_overlay1 = '<div class="area">' + h[0] + '에 가중치 추가된 중간지점 지역구 : ' + center1 + '</div>';
-                    new_infowindow1 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[0] + '에</br>가중치 추가된 중간지점</br></br>목적지 : ' + endStation[0] + '역</br>평균 소요시간 : ' + avgTime[0] + ' 분</div>';
-                }
-                else if ((h[0] != '무게중심') && (h[1] == '무게중심')) {    // 이런경우는 두번째 지역구를 걍 무게중심을 보여주는걸로
-                    new_overlay1 = '<div class="area">' + h[0] + '에 가중치 추가된 중간지점 지역구 : ' + center1 + '</div>';
-                    new_infowindow1 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[0] + '에</br>가중치 추가된 중간지점</br></br>목적지 : ' + endStation[0] + '역</br>평균 소요시간 : ' + avgTime[0] + ' 분</div>';
-                }
-                else if (h[0] == '무게중심') {
-                    new_overlay1 = '<div class="area">' + h[0] + '이 중간지점인 지역구 : ' + center1 + '</div>';
-                    new_infowindow1 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[0] + '이 중간지점</br></br>목적지 : ' + endStation[0] + '역</br>평균 소요시간 : ' + avgTime[0] + ' 분</div>';
-                }
-
-                if (name == center1) {
-                    polygon.setOptions({
-                        fillOpacity: 0.7,
-                        strokeOpacity: 0.8
-                    });
-                    // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다 
-                    kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
-                        polygon.setOptions({ fillColor: '#09f' });
-
-                        customOverlay.setContent(new_overlay1);
-                        customOverlay.setPosition(mouseEvent.latLng);
-                        customOverlay.setMap(map);
-                    });
-
-                    // 다각형에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다 
-                    kakao.maps.event.addListener(polygon, 'mousemove', function (mouseEvent) {
-                        customOverlay.setPosition(mouseEvent.latLng);
-                    });
-
-                    // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-                    // 커스텀 오버레이를 지도에서 제거합니다 
-                    kakao.maps.event.addListener(polygon, 'mouseout', function () {
-                        polygon.setOptions({ fillColor: '#fff' });
-                        customOverlay.setMap(null);
-                    });
-
-                    // 클릭하면 추천 역 표시
-                    kakao.maps.event.addListener(polygon, 'click', function () {
-                        displayLocation(WGS_points, Title, c_Lat, c_Lng, c_Lat, c_Lng, c_Lat2, c_Lng2, h);
-                    });
-                }
-
-                var marker_blue = new kakao.maps.Marker({    //1차 중간지점 마커
-                    position: new kakao.maps.LatLng(c_Lat, c_Lng),
-                    map: map,
-                    clickable: true
-                });
-
-                var infowindow_blue = new kakao.maps.InfoWindow({
-                    content: new_infowindow1
-                });
-
-                marker_blue.setMap(map);
-
-                kakao.maps.event.addListener(marker_blue, 'mouseover', function () {
-                    infowindow_blue.open(map, marker_blue);
-                });
-                kakao.maps.event.addListener(marker_blue, 'mouseout', function () {
-                    infowindow_blue.close();
-                });
-            }
-            geocoder.coord2Address(coord1.getLng(), coord1.getLat(), callback1);
-
-            let callback2 = function (result, status) {                     //가중치 추가된 좌표 지역구 다각형
-                if (status === kakao.maps.services.Status.OK) {
-                    center2 = result[0].address.region_2depth_name;
-                }
-                if (avgTime[1] == undefined) {
-                    avgTime[1] = avgTime[0]
-                    endStation[1] = endStation[0]
-                }
-
-                if ((h[0] != '무게중심') && (h[1] != '무게중심')) {
-                    new_overlay2 = '<div class="area">' + h[1] + '에 가중치 추가된 중간지점 지역구 : ' + center2 + '</div>';
-                    new_infowindow2 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[1] + '에</br>가중치 추가된 중간지점</br></br>목적지 : ' + endStation[1] + '역</br>평균 소요시간 : ' + avgTime[1] + ' 분</div>';
-                }
-                else if ((h[0] != '무게중심') && (h[1] == '무게중심')) {    // 이런경우는 두번째 지역구를 걍 무게중심을 보여주는걸로
-                    new_overlay2 = '<div class="area">' + h[1] + '이 중간지점인 지역구 : ' + center2 + '</div>';
-                    new_infowindow2 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[1] + '이 중간지점</br></br>목적지 : ' + endStation[1] + '역</br>평균 소요시간 : ' + avgTime[1] + ' 분</div>';
-                }
-                else if (h[0] == '무게중심') {
-                    new_overlay2 = '<div class="area">' + h[0] + '이 중간지점인 지역구 : ' + center2 + '</div>';
-                    new_infowindow2 = '<div style="width:150px;text-align:center;padding:6px 0;">' + h[0] + '이 중간지점</br></br>목적지 : ' + endStation[1] + '역</br>평균 소요시간 : ' + avgTime[1] + ' 분</div>';
-                }
-
-                if ((center1 != center2) && (name == center2)) {
-                    polygon.setOptions({
-                        fillOpacity: 0.7,
-                        strokeOpacity: 0.8
-                    });
-                    // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다 
-                    kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
-                        polygon.setOptions({ fillColor: '#DD1A0B' });
-
-                        customOverlay.setContent(new_overlay2);
-                        customOverlay.setPosition(mouseEvent.latLng);
-                        customOverlay.setMap(map);
-                    });
-
-                    // 다각형에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다 
-                    kakao.maps.event.addListener(polygon, 'mousemove', function (mouseEvent) {
-                        customOverlay.setPosition(mouseEvent.latLng);
-                    });
-
-                    // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-                    // 커스텀 오버레이를 지도에서 제거합니다 
-                    kakao.maps.event.addListener(polygon, 'mouseout', function () {
-                        polygon.setOptions({ fillColor: '#fff' });
-                        customOverlay.setMap(null);
-                    });
-
-                    // 클릭하면 추천 역 표시
-                    kakao.maps.event.addListener(polygon, 'click', function () {
-                        displayLocation(WGS_points, Title, c_Lat2, c_Lng2, c_Lat, c_Lng, c_Lat2, c_Lng2, h);
-                    });
-
-                }
-                var marker_blue = new kakao.maps.Marker({    //2차 중간지점 마커
-                    position: new kakao.maps.LatLng(c_Lat2, c_Lng2),
-                    map: map,
-                    clickable: true
-                });
-
-                var infowindow_blue = new kakao.maps.InfoWindow({
-                    content: new_infowindow2
-                });
-
-                marker_blue.setMap(map);
-
-                kakao.maps.event.addListener(marker_blue, 'mouseover', function () {
-                    infowindow_blue.open(map, marker_blue);
-                });
-                kakao.maps.event.addListener(marker_blue, 'mouseout', function () {
-                    infowindow_blue.close();
-                });
-            }
-            geocoder.coord2Address(coord2.getLng(), coord2.getLat(), callback2);
-        }
-        data.forEach((val) => {
-            coordinates = val.geometry.coordinates;
-            name = val.properties.SIG_KOR_NM;
-
-            displayGu(coordinates, name, WGS_points, Title, c_Lat, c_Lng, c_Lat2, c_Lng2, h);
-        });
-    }
-
-    function displayLocation(WGS_points, Title, c_Lat0, c_Lng0, c_Lat, c_Lng, c_Lat2, c_Lng2, h) {
+    function displayLocation(WGS_points, Title, i, center, center_name, head) {
         let geocoder = new kakao.maps.services.Geocoder();
-        let coord = new kakao.maps.LatLng(c_Lat0, c_Lng0);
+        let coord = new kakao.maps.LatLng(center[i][0], center[i][1]);
 
         var p_latlng = [];
         var nth_gu = 0;
 
         let callback = function (result, status) {
 
-            midAreaHot(result[0].address.region_2depth_name) // *********
-
             if (status === kakao.maps.services.Status.OK) {
                 console.log("무게중심 지역구 >>", result[0].address.region_2depth_name);       //콘솔창에 현재 지역구 위치
-
                 var select = result[0].address.region_2depth_name;
+
+                // midAreaHot(result[0].address.region_2depth_name)     // *********
             }
+
+            midAreaHot(select);     // *********
 
             for (let i = 0; i < (STA)["station"].length; i++) {
                 if (select == (STA)["station"][i].region_name) {
@@ -611,7 +572,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
             let container = document.getElementById('myMap'),
                 mapOption = {
-                    center: new kakao.maps.LatLng(c_Lat0, c_Lng0),
+                    center: new kakao.maps.LatLng(center[i][0], center[i][1]),
                     level: 8
                 };
             let map = new kakao.maps.Map(container, mapOption);
@@ -679,7 +640,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
             back.innerHTML = '지역구 다시 선택하기';
             back.id = "back_btn";
             back.addEventListener("click", function () {
-                selectArea(WGS_points, Title, c_Lat, c_Lng, c_Lat2, c_Lng2, h);
+                selectArea2(WGS_points, Title, center, center_name, head);         // 지역구 다시 선택하기
             })
             info.innerHTML = select + '인근 추천역 ' + info_len + '개';
             info.id = "info";
@@ -711,7 +672,8 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
     function midAreaHot(midArea) {
         let seoulGu = ['도봉구', '강북구', '노원구', '성북구', '중랑구', '은평구', '서대문구', '종로구', '동대문구', '중구', '성동구', '광진구', '마포구', '용산구', '강서구', '양천구', '영등포구', '구로구', '금천구', '관악구', '동작구', '서초구', '강남구', '송파구', '강동구']
         if (seoulGu.includes(midArea)) {
-            axios.get("http://3.37.178.135/api/restaurants", {
+            // axios.get("http://3.37.178.135/api/restaurants", {
+            axios.get("//3.37.178.135/api/restaurants", {
                 params: { area: midArea } //
             })
                 .then((i) => {
@@ -753,7 +715,6 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                         <button type="button" onClick={() => reload()}>다시하기</button>
                         <button className='addbtn' onClick={() => start(addLatlng, addName)}>중간 장소 찾기</button>
                         <button className='addbtn' onClick={() => buttonAdd(searchPlace)}>출발지 추가</button>
-                        {/* <div>{addLoc.map((a) => (<div key={a} className='submitAddress'>{a}</div>))}</div> */}
                         <div>{addName.map((a, i) => (
 
                             <div key={i} className='submitAddress'>
@@ -927,14 +888,11 @@ function getCentroid(poly_points) {  // 사용자 둘 or 둘 이상일 때 무�
     };
 }
 
-function getUnitvec(WGS_points, center_x, center_y, www, kkk, ggg) {
+function getUnitvec(WGS_points, center_x, center_y, ggg) {
     let unitVec = [];
 
     for (let i = 0; i < WGS_points.length; i++) {
         unitVec[i] = [WGS_points[i][0] - center_x, WGS_points[i][1] - center_y];
-        // vec_size = Math.sqrt(Math.pow(WGS_points[i][0] - center_x, 2) + Math.pow(WGS_points[i][1] - center_y, 2)) / Math.pow(WGS_points[i][0] - center_x, 2) + Math.pow(WGS_points[i][1] - center_y, 2);
-        // vec_size = 1 / Math.sqrt(Math.pow(WGS_points[i][0] - center_x, 2) + Math.pow(WGS_points[i][1] - center_y, 2));
-        // console.log("각 출발지까지 벡터 크기", vec_size);
     }
     // console.log("각 출발지까지 단위벡터", unitVec);
 
@@ -944,15 +902,10 @@ function getUnitvec(WGS_points, center_x, center_y, www, kkk, ggg) {
     addWeight[0] = 0;
     addWeight[1] = 0;
 
-    if (www) {
-        for (let i = 0; i < www[0].length; i++) {
-            addWeight[0] += (unitVec[www[0][i]][0] * ggg[0][i]);  // ggg는 가중치 값
-            addWeight[1] += (unitVec[www[0][i]][1] * ggg[0][i]);
-        }
-    }
-    for (let i = 0; i < kkk[0].length; i++) {
-        addWeight[0] += unitVec[kkk[0][i]][0];
-        addWeight[1] += unitVec[kkk[0][i]][1];
+
+    for (let i = 0; i < WGS_points.length; i++) {
+        addWeight[0] += (unitVec[i][0] * ggg[0][i]);  // ggg는 가중치 값
+        addWeight[1] += (unitVec[i][1] * ggg[0][i]);
     }
 
     weigtVec[0] = [addWeight[0] / unitVec.length, addWeight[1] / unitVec.length];
@@ -964,6 +917,7 @@ function getUnitvec(WGS_points, center_x, center_y, www, kkk, ggg) {
         weigtVec_y: weigtVec[0][1]
     }
 }
+
 
 function getNewcenter(weigtVec_x, center_x, weigtVec_y, center_y) {
     let new_center = [];
