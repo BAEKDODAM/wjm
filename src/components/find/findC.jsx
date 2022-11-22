@@ -9,7 +9,7 @@ export function FindC(props) {
 
     let [area, setArea] = useState(['강남','마포'])
     let [place, setPlace] = useState([]);
-    /*
+    /*yarn 
     axios.get('https://codingapple1.github.io/shop/data2.json')
     .then((결과)=>{ 
         let copy = [...place, ...결과.data];
