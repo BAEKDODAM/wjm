@@ -1,6 +1,5 @@
 import React, { Component, useState } from 'react';
 import Img from '../images/map_icon.png';
-
 import {Navbar, Container, Nav} from 'react-bootstrap';
 
 export function Nav_bar(props) {

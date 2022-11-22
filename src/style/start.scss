@@ -19,10 +19,14 @@
     justify-content: center;
     align-items: center;
 
+    justify-content: center;
+    align-items: center;
+
 }
 
 .start_b>div>div>div>div>button {
     //.addbtn
+    //margin: 10px auto;
     margin: 5px auto;
     padding: 0 5px;
 }
@@ -39,7 +43,7 @@
 
 .addbtn {
     height: 36px;
-    width: 250px;
+    width: 250px; //120px
     font-size: large;
 }
 
@@ -98,7 +102,9 @@
 
 .submitAddress {
     text-align: center;
-    padding: 9px !important;
+    // margin-bottom: 30px;
+    padding-top : 9px !important;
+    //padding-bottom: 9px !important;
     border: 1px solid rgb(251, 180, 90);
     border-radius: 15px;
     margin: 10px auto;
@@ -119,7 +125,7 @@
 
 .searchBtn {
     background-color: #fff2dd;
-    width: 40px;
+    width: 40px; //350
     padding: 15px;
     margin: 20px;
     border-radius: 15px;
@@ -129,7 +135,7 @@
 .searchBtn:hover {
     box-shadow: 0 0 2px .07rem rgb(251, 180, 90);
     // margin: 10px auto;
-    width: 40px;
+    width: 40px; //120
 }
 
 #form_2 {
@@ -187,6 +193,15 @@
 
 #menu_wrap {
     position: absolute;
+    /*top: 255px;
+    width: 370px;
+    // top: 0;
+    right: 10px;
+    //bottom: 0;
+    //width: 150px;
+    //height: 165px; //510이 최대 165px
+    max-height: 250px;
+    margin: 20px 0 30px 10px;*/
     top: 0;
     left: 0;
     width: 300px; //150px;
@@ -221,7 +236,7 @@
     top: 0;
     right: 10px;
     width: 370px;
-    height: 300px; //580px; //510이 최대 165
+    height: 165px; //510이 최대 165 /250/300
     margin: 10px 0 30px 10px;
     padding: 5px;
     overflow-y: auto;

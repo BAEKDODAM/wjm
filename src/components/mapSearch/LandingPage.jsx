@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import ClickAdd from './ClickAdd';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import SearchIcon from '../../images/search.png';
+import { Routes, Route, Link } from 'react-router-dom'
 import searchBtn from '../../images/search.png'
+import Pointer from '../../images/pointer.png'
 import Target from '../../images/target.png'
-
 const { kakao } = window;
 
-export function LandingPage() {
+export function LandingPage(props) {
   const [InputText, setInputText] = useState('')
   const [Place, setPlace] = useState('') //지도에 반영
   let [clickPlace, setClickPlace] = useState([]);
   let [name, setName] = useState([]);
   let [lat, setLat] = useState([]);
   let [lng, setLng] = useState([]);
+  let [address, setAddress] = useState([]);
 
   useEffect(() => {
     let sta_wrap = document.querySelector('#sta_wrap');
@@ -223,6 +228,17 @@ export function LandingPage() {
 
   return (
     <div className='start_b'>
+{/* dd
+        <form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3" controlId="formBasicEmail" >
+              <Form.Control placeholder="주소를 입력하세요" onChange={onChange} value={InputText} />
+          </Form.Group>
+          <Button type="submit"><img height="20px" src={SearchIcon}/></Button>
+        </form>
+        <ClickAdd searchPlace={Place} InputText={InputText} setAddress={setAddress}/>
+        <Link to='/find'><button className='searchBtn'>중간 지점 찾기</button></Link>
+  */}
+
       <hr style={{
         margin: '20px'
       }}></hr>
@@ -232,13 +248,13 @@ export function LandingPage() {
           <div className="option">
             <div>
               <form id="form_2" onSubmit={handleSubmit}>
-                <button className='searchBtn' type="button" onClick={() => { set_loc() }}
+                <button className='sBtn' onClick={() => { set_loc() }}
                   style={{
                     margin: '5px'
                   }}><img src={Target} width='25px'></img></button>
                 <input type="text" placeholder=' 출발지를 입력해주세요!' onChange={onChange} value={InputText} id="keyword" size="30"></input>
-                <button className='searchBtn' type="button" onClick={() => { er() }}>지우기</button>
-                <button className='searchBtn' type="submit" id="ser"><img src={searchBtn} width="18px"></img></button>
+                <button className='sBtn' type="button" onClick={() => { er() }}>지우기</button>
+                <button className='sBtn' type="submit" id="ser"><img src={searchBtn} width="18px"></img></button>
               </form>
             </div>
           </div>

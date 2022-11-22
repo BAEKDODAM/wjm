@@ -10,6 +10,8 @@ import Login from './pages/login';
 import Map from './pages/map';
 import Start from './pages/start';
 import Setloc from './pages/setloc';
+import Find from './pages/find';
+import Test from './pages/test';
 import Mapcopy from './components/mapSearch/mapcopy';
 function App() {
   function setScreenSize() {
@@ -26,8 +28,9 @@ function App() {
         <Route path="/login" element={<Login/>}></Route>
         <Route path="/map" element={<Map/>}></Route>
         <Route path="/start" element={<Start/>}></Route>
-        <Route path="/setloc" element={<Setloc />}></Route>
-        <Route path="/mapcopy" element={<Mapcopy/>}></Route>
+        <Route path="/setloc" element={<Setloc/>}></Route>
+        <Route path="/find" element={<Find/>}></Route>
+        <Route path="/test" element={<Test/>}></Route>
 
       </Routes>
     </div>
