@@ -52,15 +52,20 @@
     color: white;
 }
 
-.addbtn:hover,
-.addbtn:focus,
-.addbtn:active {
+#addbtn2 {
+    background-color: rgb(233, 124, 56);
+}
+
+
+// .addbtn:focus,
+// .addbtn:active,
+.addbtn:hover {
     background-color: rgb(251, 180, 90);
     border: 1px solid rgb(251, 180, 90);
     border-radius: 15px;
-    box-shadow: none !important;
+    // box-shadow: none !important;
     color: white;
-
+    box-shadow: 0 0 2px .07rem #616161; //rgb(251, 180, 90);
 }
 
 .start_b>form>div>input {
@@ -115,6 +120,10 @@
     padding-right: 7px !important;
     color: rgb(255, 160, 36);
     font-weight: 600;
+}
+
+.deleteBtn:hover {
+    box-shadow: 0 0 2px .07rem rgb(251, 180, 90);
 }
 
 .searchBtn {

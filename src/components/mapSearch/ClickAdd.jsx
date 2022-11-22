@@ -712,8 +712,8 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
             <div id="overlay">
                 <div id="menu_wrap" className="bg_white">
                     <div className='start_bd'>
-                        <button type="button" onClick={() => reload()}>다시하기</button>
-                        <button className='addbtn' onClick={() => start(addLatlng, addName)}>중간 장소 찾기</button>
+                        {/* <button type="button" onClick={() => reload()}>다시하기</button> */}
+                        <button id="addbtn2" className='addbtn' onClick={() => start(addLatlng, addName)}>중간 장소 찾기</button>
                         <button className='addbtn' onClick={() => buttonAdd(searchPlace)}>출발지 추가</button>
                         <div>{addName.map((a, i) => (
 
