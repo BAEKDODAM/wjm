@@ -21,6 +21,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
     let avgTime = [];       // 최소 소요시간
     let endStation = [];    // 도착역
 
+
     useEffect(() => {
         if (lat != null) {
             let container = document.getElementById('myMap'),
@@ -147,7 +148,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
             }
         }
         else {
-            alert('출발지를 최소 두개 이상 입력한 다음 눌러주새요.');
+            alert('출발지를 최소 두 개 이상 입력한 다음 눌러주새요.');
             return;
         }
 
@@ -189,9 +190,10 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                 head.push(new_head);
                 console.log(cnt + 1 + " 번째 탐색 : 가중치 출발지 이름 리스트", w);
             }
-            else if (ggg[0][0] == 1) {                                          //  가중치가 없으면( 1 곱하면 그대로니까 값은 그대로)
+            else if (ggg[0][0] == 1) {                                          //  가중치가 없으면
                 console.log(cnt + 1 + " 번째 탐색 : 가중치 추가할 출발지 없음");
                 new_head = '무게중심';
+                head.push(new_head);
                 head.push(new_head);
                 center.push([p_Lat, p_Lng]);
                 center.push([p_Lat, p_Lng]);
@@ -297,6 +299,27 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
         var map = new kakao.maps.Map(mapContainer, mapOption),
             customOverlay = new kakao.maps.CustomOverlay({});
 
+        let imageSrc_star = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+
+        for (let i = 0; i < WGS_points.length; i++) {    //출발지 마커
+            let imageSize_star = new kakao.maps.Size(24, 35);
+            let markerImage_star = new kakao.maps.MarkerImage(imageSrc_star, imageSize_star);
+            var marker_star = new kakao.maps.Marker({
+                map: map,
+                position: new kakao.maps.LatLng(WGS_points[i][0], WGS_points[i][1]),
+                title: Title[i],
+                image: markerImage_star,
+                clickable: true
+            });
+
+            marker_star.setMap(map);
+
+            var infowindow_star = new kakao.maps.InfoWindow({
+                content: '<div style="width:150px;text-align:center;padding:6px 0;">' + Title[i] + '</br>소요시간 : ' + mmm[i][1] + '분</div>',
+            });
+            infowindow_star.open(map, marker_star);
+        }
+
         const displayGu = (coordinates, name, WGS_points, Title, center, center_name, head) => {
             let path = [];
             let points = [];
@@ -367,6 +390,10 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                 if (i == 1) {
                     endStation.push(endStation[i - 1]);
                     avgTime.push(avgTime[i - 1]);
+                }
+                else if (center.length == 1) {
+                    endStation.push(endStation[i]);
+                    avgTime.push(avgTime[i]);
                 }
 
                 var infowindow_blue = new kakao.maps.InfoWindow({
@@ -490,7 +517,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                     if (mmm.length == WGS_points.length) {
 
                         for (let i = 0; i < mmm.length; i++) {
-                            if ((mmm[i][1] / sum >= rate_avg)) {    // 비율의 평균값보다 큰 출발지가 있으면
+                            if ((mmm[i][1] / sum >= rate_avg * 1.5)) {    // 비율의 평균값보다 큰 출발지가 있으면
                                 needW.push(mmm[i][0])             // 해당 출발지 인덱스 추가
                                 key = 1;
                                 needIndex.push(mmm[i][0])
@@ -601,31 +628,89 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
 
             // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ매장정보 표시 추가하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-            for (let i = 0; i < p_latlng.length; i++) {       //중간지점 지역구 지하철역 마커    << 포문 범위 매장 정보 길이로 바꾸기
-                let imageSize_red = new kakao.maps.Size(35, 40);
-                let markerImage_red = new kakao.maps.MarkerImage(imageSrc_red, imageSize_red);
-                var marker_red = new kakao.maps.Marker({
-                    map: map,
-                    position: new kakao.maps.LatLng(p_latlng[i][0], p_latlng[i][1]),    // << 매장 좌표로 바꾸기
-                    title: (STA)["station"][nth_gu]["info"][i].PstationName,            // << 매장 이름으로 바꾸기
-                    image: markerImage_red,
-                    clickable: true
-                });
-                var infowindow_red = new kakao.maps.InfoWindow({
-                    content: '<a href="https://map.kakao.com/link/to/' + (STA)["station"][nth_gu]["info"][i].PstationName + ',' + p_latlng[i][0] + ',' + p_latlng[i][1] + '">' +
-                        '            <div style="width:150px;text-align:center;padding:6px 0;">' + (STA)["station"][nth_gu]["info"][i].PstationName + '</br>Kakao 지도 길찾기 ></div > ' +    // << 매장 이름으로 바꾸기, 길찾기 링크 추가
-                        '     </a>',
-                    removable: true
-                });
+            // for (let i = 0; i < p_latlng.length; i++) {       //중간지점 지역구 지하철역 마커    << 포문 범위 매장 정보 길이로 바꾸기
+            //     let imageSize_red = new kakao.maps.Size(35, 40);
+            //     let markerImage_red = new kakao.maps.MarkerImage(imageSrc_red, imageSize_red);
+            //     var marker_red = new kakao.maps.Marker({
+            //         map: map,
+            //         position: new kakao.maps.LatLng(p_latlng[i][0], p_latlng[i][1]),    // << 매장 좌표로 바꾸기
+            //         title: (STA)["station"][nth_gu]["info"][i].PstationName,            // << 매장 이름으로 바꾸기
+            //         image: markerImage_red,
+            //         clickable: true
+            //     });
+            //     var infowindow_red = new kakao.maps.InfoWindow({
+            //         content: '<a href="https://map.kakao.com/link/to/' + (STA)["station"][nth_gu]["info"][i].PstationName + ',' + p_latlng[i][0] + ',' + p_latlng[i][1] + '">' +
+            //             '            <div style="width:150px;text-align:center;padding:6px 0;">' + (STA)["station"][nth_gu]["info"][i].PstationName + '</br>Kakao 지도 길찾기 ></div > ' +    // << 매장 이름으로 바꾸기, 길찾기 링크 추가
+            //             '     </a>',
+            //         removable: true
+            //     });
 
-                marker_red.setMap(map);
+            //     marker_red.setMap(map);
 
-                (function (marker_red, infowindow_red) {
-                    kakao.maps.event.addListener(marker_red, 'click', function () {
-                        infowindow_red.open(map, marker_red);
-                    });
-                })(marker_red, infowindow_red);
-            }
+            //     (function (marker_red, infowindow_red) {
+            //         kakao.maps.event.addListener(marker_red, 'click', function () {
+            //             infowindow_red.open(map, marker_red);
+            //         });
+            //     })(marker_red, infowindow_red);
+            // }
+
+            var store = []
+            axios.get("https://wjm.potados.com/api/restaurants", {
+                params: { area: select }
+            })
+                .then((i) => {
+                    for (let j in i.data) {
+                        store.push(i.data[j])
+                    }
+                    console.log(store);
+
+                    let geocoder2 = new kakao.maps.services.Geocoder();
+                    let add = [];
+                    let name2 = [];
+                    for (let i = 0; i < store.length; i++) {
+                        geocoder2.addressSearch(store[i].address, function (result, status) {
+
+                            if (status === kakao.maps.services.Status.OK) {
+                                add.push([result[0].y, result[0].x]);
+                                name2.push(store[i].name)
+
+                                console.log(result);
+                                if (i == store.length - 1) {
+                                    console.log(add);
+
+                                    for (let k = 0; k < store.length; k++) {
+                                        let imageSize_red = new kakao.maps.Size(35, 40);
+                                        let markerImage_red = new kakao.maps.MarkerImage(imageSrc_red, imageSize_red);
+                                        var marker_red = new kakao.maps.Marker({
+                                            map: map,
+                                            position: new kakao.maps.LatLng(add[k][0], add[k][1]),    // << 매장 좌표로 바꾸기
+                                            title: name2[k],            // << 매장 이름으로 바꾸기
+                                            image: markerImage_red,
+                                            clickable: true
+                                        });
+                                        var infowindow_red = new kakao.maps.InfoWindow({
+                                            content: '<a href="https://map.kakao.com/link/to/' + name2[k] + ',' + add[k][0] + ',' + add[k][1] + '">' +
+                                                '            <div style="width:150px;text-align:center;padding:6px 0;">' + name2[k] + '</br>Kakao 지도 길찾기 ></div > ' +    // << 매장 이름으로 바꾸기, 길찾기 링크 추가
+                                                '     </a>',
+                                            removable: true
+                                        });
+
+                                        marker_red.setMap(map);
+
+                                        (function (marker_red, infowindow_red) {
+                                            kakao.maps.event.addListener(marker_red, 'click', function () {
+                                                infowindow_red.open(map, marker_red);
+                                            });
+                                        })(marker_red, infowindow_red);
+                                    }
+                                }
+                            }
+                        })
+                    }
+                })
+                .catch(() => {
+                    console.log("실패")
+                })
 
             // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ매장정보 표시 추가하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ            
 
@@ -634,6 +719,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                 back = document.createElement('button'),
                 info = document.createElement('div'),
                 hr = document.createElement('hr');
+            // hotPlace = document.querySelector('.hotPlace');
 
             sta_wrap.style.display = "flex";
 
@@ -642,6 +728,12 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
             back.className = 'addbtn'         // css 추가
             back.addEventListener("click", function () {
                 selectArea2(WGS_points, Title, center, center_name, head);         // 지역구 다시 선택하기
+
+                // if (back) {
+                //     while (hotPlace.hasChildNodes()) {
+                //         hotPlace.removeChild(hotPlace.lastChild);
+                //     }
+                // }
             })
             info.innerHTML = select + '인근 추천역 ' + info_len + '개';
             info.id = "info";
@@ -659,6 +751,7 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                 sta_wrap.appendChild(new_sta);
             }
 
+
             // for (let p = 0; p < p_latlng.length; p++) {                         //나중에 시간있으면 추가
             //     for (let i = 0; i < WGS_points.length; i++) {
             //         searchPubTransPathAJAX(WGS_points, p_latlng[p][0], p_latlng[p][1], i);
@@ -671,11 +764,10 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
     }
 
     function midAreaHot(midArea) {
-        let seoulGu = ['도봉구', '강북구', '노원구', '성북구', '중랑구', '은평구', '서대문구', '종로구', '동대문구', '중구', '성동구', '광진구', '마포구', '용산구', '강서구', '양천구', '영등포구', '구로구', '금천구', '관악구', '동작구', '서초구', '강남구', '송파구', '강동구']
+        let seoulGu = ['도봉구', '강북구', '노원구', '성북구', '중랑구', '은평구', '서대문구', '종로구', '동대문구', '중구', '성동구', '광진구', '마포구', '용산구', '강서구', '양천구', '영등포구', '구로구', '금천구', '관악구', '동작구', '서초구', '강남구', '송파구', '강동구'];
         if (seoulGu.includes(midArea)) {
-            // axios.get("http://3.37.178.135/api/restaurants", {
-            axios.get("//3.37.178.135/api/restaurants", {
-                params: { area: midArea } //
+            axios.get("https://wjm.potados.com/api/restaurants", {
+                params: { area: midArea }
             })
                 .then((i) => {
                     let copy = []
@@ -683,26 +775,12 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                         copy.push(i.data[j])
                     }
                     setHotPlace(copy)
-                    // hotPlace 리스트에 담기(setHotPlace(copy)-> 뒤에 리턴문 앞에 리스트 map해서 <div> 출력하도록 코드작성
                 })
                 .catch(() => {
                     console.log("실패")
                 })
         }
     }
-
-    // let geocoder = new kakao.maps.services.Geocoder();
-    // let hpx = 0
-    // let hpy = 0
-    // let callback = function (result, status) {
-    //     if (status === kakao.maps.services.Status.OK) {
-    //         console.log("geocoder", result);
-    //         hpx = result[0].x
-    //         hpy = result[0].y
-    //         console.log('좌표', hpx, hpy)
-    //     }
-    // };
-    // geocoder.addressSearch("서울 마포구 토정로 318 영우빌딩 1층 모연 마포본점", callback)
 
     return (
         <>
@@ -745,12 +823,11 @@ export function ClickAdd({ searchPlace, lat, lng, name }) {
                 {
                     hotPlace.map((a, i) => (
                         //geocoder.addressSearch(a.address)
-                        <div className='hotPlace1' key={i} onClick={() => {
-                            window.location.href = `https://map.kakao.com/link/search/${a.address}`
-                        }}>
+                        <div className='hotPlace1' key={i}>
+                            {/* onClick={() => { window.location.href = `https://map.kakao.com/link/search/${a.address}` }} */}
                             <a className='hpName'>{a.name}</a>
                             <br />{a.address}
-                            <br />{a.keyword}
+                            <br />리뷰 긍정도 : {a.keyword}%
                         </div>
                     ))
                 }

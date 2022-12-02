@@ -33,7 +33,7 @@ export function LandingPage() {
     function searchPlaces() {
       if (Place != "") {
         if (!Place.replace(/^\s+|\s+$/g, '')) {
-          alert('키워드를 입력해주세요!');
+          alert('검색 결과 중 오류가 발생했습니다.');
           return false;
         }
 
@@ -236,7 +236,7 @@ export function LandingPage() {
                   style={{
                     margin: '5px'
                   }}><img src={Target} width='25px'></img></button>
-                <input type="text" placeholder=' 출발지를 입력해주세요!' onChange={onChange} value={InputText} id="keyword" size="30"></input>
+                <input type="text" placeholder=' 출발지를 입력해 주세요!' onChange={onChange} value={InputText} id="keyword" size="30"></input>
                 <button className='searchBtn' type="button" onClick={() => { er() }}>지우기</button>
                 <button className='searchBtn' type="submit" id="ser"><img src={searchBtn} width="18px"></img></button>
               </form>
